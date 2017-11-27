@@ -6,7 +6,7 @@ LedPanel led_panel = LedPanel();
 
 void setup() {
   led_panel.setup();
-  led_panel.test();
+  led_panel.drawTime(0);
 }
 
 void loop() {

@@ -7,6 +7,8 @@
 #define LED_PANEL_PIN_CS 10
 #define LED_PANEL_BRIGHTNESS 2
 
+#define LED_PANEL_CHAR_WIDTH 5
+
 class LedPanel {
 
   private:
@@ -17,5 +19,7 @@ class LedPanel {
     LedPanel();
     void setup();  
     void test();
+    void drawTime(double value);
+    void drawString(String s);
 };
 

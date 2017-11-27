@@ -28,3 +28,30 @@ void LedPanel::test() {
   _matrix.write();
 }
 
+void LedPanel::drawTime(double value) {
+  char s[6]; // ##.## and 0 terminator
+  dtostrf(value, 5, 2, s);
+  drawString(s);
+}
+
+void LedPanel::drawString(String s) {
+  _matrix.fillScreen(LOW);
+  int y = 0;
+  int x = 0;
+  
+  for (int i = 0; i < s.length(); i++) {
+
+    if (s[i] == '.') {
+      x -= 2;
+    }
+
+    _matrix.drawChar(x, y, s[i], HIGH, LOW, 1);
+    
+    x += LED_PANEL_CHAR_WIDTH;  
+    if (s[i] != '.') {
+      x++;
+    }
+  }
+  _matrix.write();
+}
+
