@@ -42,7 +42,7 @@ void LedPanel::drawString(String s) {
   for (int i = 0; i < s.length(); i++) {
 
     if (s[i] == '.') {
-      x -= 2;
+      x--;
     }
 
     _matrix.drawChar(x, y, s[i], HIGH, LOW, 1);
