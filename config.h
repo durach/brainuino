@@ -8,5 +8,8 @@
 
 #define BUTTON_PRESSED 0
 
-#define STATE_WAITING 0
+#define STATE_INIT 0
+#define STATE_WAITING 1
+#define STATE_STARTED 2
+#define STATE_STOPPED 3
 
