@@ -22,48 +22,48 @@ void LedPanel::setup() {
   _matrix.setRotation(2, 1);
   _matrix.setRotation(3, 1);
 
-  _time_y_offset = 6;
-  _time_x_offset = 8;
+  _matrix.fillScreen(LOW);
+  _matrix.write();
 }
 
 void LedPanel::test() {
-  _drawBegin();
-  //drawString("60.00");
-  //drawBrainTable1();
-  //drawBrainTable2();
-  //_drawNumber1(0);
-  //_drawNumber2(1);
-  _drawNumber3(0);
-  _drawNumber4(1);
-  _drawEnd();
+  drawBegin();
+  drawTime(0);
+  drawBrainTable(1);
+  drawBrainTable(2);
+  drawEnd();
 }
 
-void LedPanel::_drawBegin() {
+void LedPanel::drawBegin() {
   _matrix.fillScreen(LOW);  
 }
 
-void LedPanel::_drawEnd() {
+void LedPanel::drawEnd() {
   _matrix.write();
 }
 
 void LedPanel::drawTime(double value) {
   char s[6]; // ##.## and 0 terminator
   dtostrf(value, 5, 2, s);
-  drawString(s);
+  _drawTimeString(s);
 }
 
-void LedPanel::drawString(String s) {
+void LedPanel::_drawTimeString(String s) {
 
   _matrix.setFont(&TomThumb);
   
-  int y = _time_y_offset;
-  int x = _time_x_offset;
+  int x = 8;
+  int y = 6;
   
   for (int i = 0; i < s.length(); i++) {
 
+    if (s[i] == '.') {
+      x--;
+    }
+        
     _matrix.drawChar(x, y, s[i], HIGH, LOW, 1);
-    
-    x += LED_PANEL_CHAR_WIDTH;  
+
+    x += 3;
 
     // Hack for chosen font (Picopixel) to save matrix space ;)
     if (s[i] == '.') {
@@ -74,12 +74,18 @@ void LedPanel::drawString(String s) {
   }
 }
 
-void LedPanel::drawBrainTable1() {
-  _drawNumber1(LEF_PANEL_BRAIN_TABLE_1_CELL);
-}
-
-void LedPanel::drawBrainTable2() {
-  _drawNumber2(LEF_PANEL_BRAIN_TABLE_2_CELL);
+void LedPanel::drawBrainTable(byte table) {
+  switch(table) {
+    case TABLE_1:
+      _drawNumber1(LEF_PANEL_BRAIN_TABLE_1_CELL);
+      break;
+    case TABLE_2:
+      _drawNumber2(LEF_PANEL_BRAIN_TABLE_2_CELL);
+      break;
+    default:
+      // do nothing
+      ;
+  }
 }
 
 void LedPanel::_drawNumber1(byte cell) {
@@ -148,12 +154,26 @@ void LedPanel::_drawNumber4(byte cell) {
   _matrix.drawFastHLine(x + 5, y + 3, 2, fg_color);
   _matrix.drawFastHLine(x + 1, y + 4, 2, fg_color);
   _matrix.drawFastHLine(x + 5, y + 4, 2, fg_color);
-  _matrix.drawFastHLine(x + 1, y + 5, 7, fg_color);
-  _matrix.drawFastHLine(x + 1, y + 6, 7, fg_color);
+  _matrix.drawFastHLine(x + 1, y + 5, 6, fg_color);
+  _matrix.drawFastHLine(x + 1, y + 6, 6, fg_color);
   _matrix.drawFastHLine(x + 5, y + 7, 2, fg_color);
 }
 
 byte LedPanel::_getCellOffsetX(byte cell) {
   return cell * 8;
+}
+
+void LedPanel::drawFalseStart() {
+
+  _matrix.setFont(NULL);
+  
+  int x = 10;
+  int y = 0;
+  String s = "FS";
+  
+  for (int i = 0; i < s.length(); i++) {
+    _matrix.drawChar(x, y, s[i], HIGH, LOW, 1);
+    x += 7;  
+  }
 }
 
