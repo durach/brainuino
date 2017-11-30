@@ -7,8 +7,6 @@
 #define LED_PANEL_PIN_CS 10
 #define LED_PANEL_BRIGHTNESS 2
 
-#define LED_PANEL_CHAR_WIDTH 3
-
 #define LEF_PANEL_BRAIN_TABLE_1_CELL 0
 #define LEF_PANEL_BRAIN_TABLE_2_CELL 3
 
@@ -20,21 +18,21 @@ class LedPanel {
     byte _time_y_offset;
     byte _time_x_offset;
 
-    void _drawBegin();
-    void _drawEnd();
     byte _getCellOffsetX(byte cell);
     void _drawNumber1(byte cell);
     void _drawNumber2(byte cell);
     void _drawNumber3(byte cell);
     void _drawNumber4(byte cell);
+    void _drawTimeString(String s);
     
   public:
     LedPanel();
     void setup();  
     void test();
+    void drawBegin();
+    void drawEnd();
     void drawTime(double value);
-    void drawString(String s);
-    void drawBrainTable1();
-    void drawBrainTable2();
+    void drawBrainTable(byte table);
+    void drawFalseStart();
 };
 

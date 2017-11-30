@@ -1,5 +1,3 @@
-#define DEBUG 1
-
 #define PIN_BUTTON_START_60 5
 #define PIN_BUTTON_START_20 6
 #define PIN_BUTTON_RESET 7
@@ -12,4 +10,8 @@
 #define STATE_WAITING 1
 #define STATE_STARTED 2
 #define STATE_STOPPED 3
+
+#define TABLE_1 1
+#define TABLE_2 2
+#define NO_TABLE 0
 
