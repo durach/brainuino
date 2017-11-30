@@ -23,7 +23,7 @@ class LedPanel {
     void _drawNumber2(byte cell);
     void _drawNumber3(byte cell);
     void _drawNumber4(byte cell);
-    void _drawTimeString(String s);
+    void _drawTimeString(String s, bool inversed = false);
     
   public:
     LedPanel();
@@ -31,7 +31,7 @@ class LedPanel {
     void test();
     void drawBegin();
     void drawEnd();
-    void drawTime(double value);
+    void drawTime(double value, bool inversed = false);
     void drawBrainTable(byte table);
     void drawFalseStart();
 };

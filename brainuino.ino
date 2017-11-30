@@ -30,6 +30,7 @@ void setup() {
 
   state = STATE_WAITING;
   Serial.println("Setup Done");
+
 }
 
 void loop() {
@@ -54,7 +55,11 @@ void loop() {
         led_panel.drawTime(timer.value);  
       }
     } else if (state == STATE_STARTED) {
-      led_panel.drawTime(timer.value);
+      if (timer.value <= START_SCREEN_TIME) {
+        led_panel.drawTime(timer.value, true);
+      } else {
+        led_panel.drawTime(timer.value);
+      }
     }
     
     if (display_table != NO_TABLE) {

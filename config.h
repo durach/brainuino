@@ -15,3 +15,4 @@
 #define TABLE_2 2
 #define NO_TABLE 0
 
+#define START_SCREEN_TIME 1.00

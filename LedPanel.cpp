@@ -42,26 +42,35 @@ void LedPanel::drawEnd() {
   _matrix.write();
 }
 
-void LedPanel::drawTime(double value) {
+void LedPanel::drawTime(double value, bool inversed = false) {
   char s[6]; // ##.## and 0 terminator
   dtostrf(value, 5, 2, s);
-  _drawTimeString(s);
+  _drawTimeString(s, inversed);
 }
 
-void LedPanel::_drawTimeString(String s) {
+void LedPanel::_drawTimeString(String s, bool inversed = false) {
 
   _matrix.setFont(&TomThumb);
+
+  if (inversed) {
+    _matrix.fillScreen(HIGH);  
+  }
   
   int x = 8;
   int y = 6;
   
   for (int i = 0; i < s.length(); i++) {
 
+    // Hack for chosen font (Picopixel) to save matrix space ;)
     if (s[i] == '.') {
       x--;
     }
-        
-    _matrix.drawChar(x, y, s[i], HIGH, LOW, 1);
+
+    if (inversed) {
+      _matrix.drawChar(x, y, s[i], LOW, HIGH, 1);
+    } else {
+      _matrix.drawChar(x, y, s[i], HIGH, LOW, 1);
+    }
 
     x += 3;
 
