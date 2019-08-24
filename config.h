@@ -4,6 +4,7 @@
 #define PIN_BUTTON_TABLE_1 0
 #define PIN_BUTTON_TABLE_2 1
 
+#define PIN_BUZZER 8
 #define BUTTON_PRESSED 0
 
 #define STATE_INIT 0
