@@ -2,6 +2,7 @@
 #include "Timer.h"
 #include "Buzzer.h"
 #include "Lamps.h"
+#include "Panel.h"
 
 Timer timer = Timer();
 Buzzer buzzer = Buzzer(PIN_BUZZER);
@@ -11,10 +12,9 @@ Lamps lamps = Lamps(PIN_LED_START, lampPins);
 
 byte tablePins[] = {PIN_BUTTON_TABLE_0, PIN_BUTTON_TABLE_1, PIN_BUTTON_TABLE_2, PIN_BUTTON_TABLE_3};
 
-byte state = STATE_INIT;
+Panel panel = Panel(PIN_PANEL_CLK, PIN_PANEL_DIO);
 
-//bool update_panel = false;
-//bool display_falsestart = false;
+byte state = STATE_INIT;
 
 void setup() {
 
@@ -25,11 +25,12 @@ void setup() {
   pinMode(PIN_BUTTON_START_20, INPUT_PULLUP);
   pinMode(PIN_BUTTON_RESET, INPUT_PULLUP);
 
-  for (byte i = 0; i <= MAX_TABLES; i++) {
+  for (byte i = 0; i < MAX_TABLES; i++) {
     pinMode(tablePins[i], INPUT_PULLUP);
   }
 
   lamps.setup();
+  panel.setup();
 
   state = STATE_WAITING;
   Serial.println("Setup Done");
@@ -41,13 +42,11 @@ void loop() {
 
   timer.tick();
   
-//  process_panel();
+  processPanel();
 
 }
 
 void processButtons() {
-
-  // IDEA, possible we may use PIND
 
   if (state == STATE_STARTED) {
     processButtonsTables() || processButtonReset();
@@ -68,7 +67,7 @@ bool processButtonsTables() {
   // Hack? Use PIND instead
   byte buttons = 0;
 
-  for (byte i = 0; i <= MAX_TABLES; i++) {
+  for (byte i = 0; i < MAX_TABLES; i++) {
     if (digitalRead(tablePins[i]) == BUTTON_PRESSED) {
       bitSet(buttons, i);
     }
@@ -109,39 +108,14 @@ bool processButtonReset() {
   }
 }
 
-//void process_panel() {
-//  if (timer.is_updated || display_falsestart) {
-//    update_panel = true;
-//  }
-//
-//  if (update_panel) {
-//    update_panel = false;
-//    
-//    led_panel.drawBegin();
-//
-//    if (state == STATE_STOPPED) {
-//      if (display_falsestart) {
-//        led_panel.drawFalseStart();
-//      } else {
-//        led_panel.drawTime(timer.value);  
-//      }
-//    } else if (state == STATE_STARTED) {
-//      if (timer.value <= START_SCREEN_TIME) {
-//        led_panel.drawTime(timer.value, true);
-//      } else {
-//        led_panel.drawTime(timer.value);
-//      }
-//    }
-//    
-//    if (display_table != NO_TABLE) {
-//       led_panel.drawBrainTable(display_table);
-//    }
-//    
-//    led_panel.drawEnd();
-//    
-//    timer.is_updated = false;
-//  }
-//}
+void processPanel() {
+  
+  if (timer.isUpdated) {
+     panel.displayTime(timer.value);
+  }
+        
+  timer.isUpdated = false;
+}
 
 void handleButtonStart60() {
   Serial.println("Start 60");
@@ -170,9 +144,7 @@ void handleButtonReset() {
   timer.reset();
   lamps.allOff();
   buzzer.off();
-//  display_table = NO_TABLE;
-//  update_panel = true;
-//  display_falsestart = false;
+  panel.off();
 }
 
 void handleTable(byte table) {
@@ -191,7 +163,7 @@ void handleTable(byte table) {
 //    display_table = table;
     buzzer.off();
     buzzer.playFalseStartSound();
-//    display_falsestart = true;
+    panel.displayFalseStart();
     lamps.onTable(table);
     state = STATE_STOPPED;
   } else if (state == STATE_INIT) {

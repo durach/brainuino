@@ -1,19 +1,24 @@
+#include <Arduino.h>
+
 #define MAX_TABLES 4
 
-#define PIN_BUTTON_START_60 5
-#define PIN_BUTTON_START_20 6
-#define PIN_BUTTON_RESET 7
 #define PIN_BUTTON_TABLE_0 0
 #define PIN_BUTTON_TABLE_1 1
 #define PIN_BUTTON_TABLE_2 2
 #define PIN_BUTTON_TABLE_3 3
+#define PIN_BUTTON_START_60 4
+#define PIN_BUTTON_START_20 5
+#define PIN_BUTTON_RESET 6
+#define PIN_BUZZER 7
 
-#define PIN_BUZZER 8
-#define PIN_LED_START 13
-#define PIN_LED_TABLE_3 12
-#define PIN_LED_TABLE_2 11
-#define PIN_LED_TABLE_1 10
-#define PIN_LED_TABLE_0 9
+#define PIN_LED_TABLE_0 8
+#define PIN_LED_TABLE_1 9
+#define PIN_LED_TABLE_2 10
+#define PIN_LED_TABLE_3 11
+#define PIN_LED_START 12
+
+#define PIN_PANEL_CLK A0
+#define PIN_PANEL_DIO A1
 
 #define BUTTON_PRESSED 0
 

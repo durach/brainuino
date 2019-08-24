@@ -17,20 +17,16 @@ void Lamps::setup() {
 }
 
 void Lamps::onStart() {
-   digitalWrite(_pinStart, HIGH);
+  digitalWrite(_pinStart, HIGH);
 }
 
 void Lamps::onTable(byte table) {
   digitalWrite(_pinTable[table-1], HIGH);
-  Serial.print(" On");
-  Serial.println(_pinTable[table-1]);
 }
 
 void Lamps::allOff() {
   digitalWrite(_pinStart, LOW);
   for (byte i = 0; i < MAX_TABLES; i++) {
-    Serial.print(" Off");
-    Serial.println(_pinTable[i]);
     digitalWrite(_pinTable[i], LOW);
   }
 }
