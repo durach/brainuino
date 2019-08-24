@@ -19,8 +19,10 @@
 #define TABLE_1 1
 #define TABLE_2 2
 #define NO_TABLE 0
+#define TABLE_COLLISION -1
 
 //#define START_SCREEN_TIME 1.00
 
 #define ERROR_NOT_INITED 0
 #define ERROR_UNKNOWN_STATE 1
+#define ERROR_BUTTONS_COLLISION 2

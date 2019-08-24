@@ -7,7 +7,7 @@ Timer timer = Timer();
 Buzzer buzzer = Buzzer(PIN_BUZZER);
 Lamps lamps = Lamps(PIN_BUTTON_START);
 
-volatile byte state = STATE_INIT;
+byte state = STATE_INIT;
 
 //bool update_panel = false;
 //bool display_falsestart = false;
@@ -41,6 +41,8 @@ void loop() {
 
 void processButtons() {
 
+  // IDEA, possible we may use PIND
+
   if (state == STATE_STARTED) {
     processButtonsTables() || processButtonReset();
   } else if (state == STATE_WAITING) {
@@ -56,15 +58,32 @@ void processButtons() {
 }
 
 bool processButtonsTables() {
-  // TODO: Add protection against simultation tracking
+  
+  // Hack? Use PIND instead
+  byte buttons = 0;
+
   if (digitalRead(PIN_BUTTON_TABLE_1) == BUTTON_PRESSED) {
-    handleTable(TABLE_1);
-    return true;
-  } else if (digitalRead(PIN_BUTTON_TABLE_2) == BUTTON_PRESSED) {
-    handleTable(TABLE_2);
+    bitSet(buttons, TABLE_1 - 1);
+  }
+  if (digitalRead(PIN_BUTTON_TABLE_2) == BUTTON_PRESSED) {
+    bitSet(buttons, TABLE_2 - 1);
+  }
+  // TODO: Add more tables here
+
+  short table = buttonsGetTableNumber(buttons);
+
+  if (table == NO_TABLE) {
+    return false;
+  }
+
+  if (table == TABLE_COLLISION) {
+    handleError(ERROR_BUTTONS_COLLISION);
     return true;
   }
-  return false;
+
+  handleTable(table);
+  return true;
+
 }
 
 bool processButtonsStart() {
@@ -181,5 +200,32 @@ void handleTable(byte table) {
 
 void handleError(byte errorNo) {
   Serial.print("Error ");
-  Serial.print(errorNo);
+  Serial.println(errorNo);
+  state = STATE_STOPPED;
+}
+
+short buttonsGetTableNumber(byte buttons) {
+
+  if (buttons == 0) {
+    return NO_TABLE;
+  }
+
+  byte table = 0;
+  byte bit_number = 1;
+  
+  while(buttons > 0) {
+    if (buttons & 1) {
+      if (table == 0) {
+        table = bit_number;
+      } else {
+        // Two or more buttons simultaniously pressed
+        return TABLE_COLLISION;
+      }
+    }
+
+    buttons = buttons >> 1;
+    bit_number++;
+  }
+
+  return table;
 }
