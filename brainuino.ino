@@ -1,10 +1,11 @@
-
 #include "config.h"
 #include "LedPanel.h"
 #include "Timer.h"
+#include "Buzzer.h"
 
 LedPanel led_panel = LedPanel();
 Timer timer = Timer();
+Buzzer buzzer = Buzzer(PIN_BUZZER);
 
 volatile byte state = STATE_INIT;
 volatile byte display_table = NO_TABLE;
@@ -30,9 +31,6 @@ void setup() {
 
   state = STATE_WAITING;
   Serial.println("Setup Done");
-
-  
-
 }
 
 void loop() {
@@ -98,6 +96,7 @@ void handle_start60_button() {
   Serial.println("Start 60");
   if (state == STATE_WAITING) {
     timer.start(TIMER_START_60);
+    buzzer.playStartSound();
     state = STATE_STARTED;
   }
 }
@@ -106,6 +105,7 @@ void handle_start20_button() {
   Serial.println("Start 20");
   if (state == STATE_WAITING) {
     timer.start(TIMER_START_20);
+    buzzer.playStartSound();
     state = STATE_STARTED;
   }
 }
@@ -135,13 +135,18 @@ void handle_table2_button() {
 // NOTE: to be called from an interrrupt
 void hanble_table(byte table) {
  if (state == STATE_STARTED) {
+    Serial.println("Table Pressed");
     display_table = table;
+    buzzer.off();
+    buzzer.playTableSound();
     state = STATE_STOPPED;
     timer.stop();
   } else if (state == STATE_WAITING) {
+    Serial.println("False Start");
     display_table = table;
+    buzzer.off();
+    buzzer.playFalseStartSound();
     display_falsestart = true;
     state = STATE_STOPPED;
   }
 }
-
