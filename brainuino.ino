@@ -31,6 +31,8 @@ void setup() {
   state = STATE_WAITING;
   Serial.println("Setup Done");
 
+  
+
 }
 
 void loop() {
@@ -39,6 +41,25 @@ void loop() {
 
   timer.tick();
   
+  process_panel();
+
+}
+
+void process_buttons() {
+  if (state == STATE_WAITING) {
+      if (digitalRead(PIN_BUTTON_START_60) == BUTTON_PRESSED) {
+      handle_start60_button();
+    } else if (digitalRead(PIN_BUTTON_START_20) == BUTTON_PRESSED) {
+      handle_start20_button();
+    }
+  } else if ((state == STATE_STARTED) || (state == STATE_STOPPED)) {
+    if (digitalRead(PIN_BUTTON_RESET) == BUTTON_PRESSED) {
+      handle_reset_button();
+    }
+  }
+}
+
+void process_panel() {
   if (timer.is_updated || display_falsestart) {
     update_panel = true;
   }
@@ -69,20 +90,6 @@ void loop() {
     led_panel.drawEnd();
     
     timer.is_updated = false;
-  }
-}
-
-void process_buttons() {
-  if (state == STATE_WAITING) {
-      if (digitalRead(PIN_BUTTON_START_60) == BUTTON_PRESSED) {
-      handle_start60_button();
-    } else if (digitalRead(PIN_BUTTON_START_20) == BUTTON_PRESSED) {
-      handle_start20_button();
-    }
-  } else if ((state == STATE_STARTED) || (state == STATE_STOPPED)) {
-    if (digitalRead(PIN_BUTTON_RESET) == BUTTON_PRESSED) {
-      handle_reset_button();
-    }
   }
 }
 
