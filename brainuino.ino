@@ -23,9 +23,6 @@ void setup() {
   pinMode(PIN_BUTTON_TABLE_1, INPUT_PULLUP);
   pinMode(PIN_BUTTON_TABLE_2, INPUT_PULLUP);
 
-  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_TABLE_1), handle_table1_button, FALLING);
-  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_TABLE_2), handle_table2_button, FALLING);
-
   lamps.setup();
 
   state = STATE_WAITING;
@@ -34,7 +31,7 @@ void setup() {
 
 void loop() {
  
-  process_buttons();
+  processButtons();
 
   timer.tick();
   
@@ -42,17 +39,50 @@ void loop() {
 
 }
 
-void process_buttons() {
-  if (state == STATE_WAITING) {
-      if (digitalRead(PIN_BUTTON_START_60) == BUTTON_PRESSED) {
-      handle_start60_button();
-    } else if (digitalRead(PIN_BUTTON_START_20) == BUTTON_PRESSED) {
-      handle_start20_button();
-    }
-  } else if ((state == STATE_STARTED) || (state == STATE_STOPPED)) {
-    if (digitalRead(PIN_BUTTON_RESET) == BUTTON_PRESSED) {
-      handle_reset_button();
-    }
+void processButtons() {
+
+  if (state == STATE_STARTED) {
+    processButtonsTables() || processButtonReset();
+  } else if (state == STATE_WAITING) {
+    processButtonsTables() || processButtonsStart();
+  } else if (state == STATE_STOPPED) {
+    processButtonReset();
+  } else if (state == STATE_INIT) {
+    handleError(ERROR_NOT_INITED);    
+  } else {
+    handleError(ERROR_UNKNOWN_STATE);
+  }
+
+}
+
+bool processButtonsTables() {
+  // TODO: Add protection against simultation tracking
+  if (digitalRead(PIN_BUTTON_TABLE_1) == BUTTON_PRESSED) {
+    handleTable(TABLE_1);
+    return true;
+  } else if (digitalRead(PIN_BUTTON_TABLE_2) == BUTTON_PRESSED) {
+    handleTable(TABLE_2);
+    return true;
+  }
+  return false;
+}
+
+bool processButtonsStart() {
+  // TODO: Add protection against simultation tracking
+  if (digitalRead(PIN_BUTTON_START_60) == BUTTON_PRESSED) {
+    handleButtonStart60();
+    return true;
+  } else if (digitalRead(PIN_BUTTON_START_20) == BUTTON_PRESSED) {
+    handleButtonStart20();
+    return true;
+  } 
+  return false;
+}
+
+bool processButtonReset() {
+  if (digitalRead(PIN_BUTTON_RESET) == BUTTON_PRESSED) {
+    handleButtonReset();
+    return true;
   }
 }
 
@@ -90,8 +120,7 @@ void process_buttons() {
 //  }
 //}
 
-// NOTE: called from the loop
-void handle_start60_button() {
+void handleButtonStart60() {
   Serial.println("Start 60");
   if (state == STATE_WAITING) {
     timer.start(TIMER_START_60);
@@ -101,7 +130,7 @@ void handle_start60_button() {
   }
 }
 
-void handle_start20_button() {
+void handleButtonStart20() {
   Serial.println("Start 20");
   if (state == STATE_WAITING) {
     timer.start(TIMER_START_20);
@@ -111,31 +140,21 @@ void handle_start20_button() {
   }
 }
 
-void handle_reset_button() {
+void handleButtonReset() {
   Serial.println("Reset");
   state = STATE_WAITING;
   timer.stop();
   timer.reset();
   lamps.allOff();
+  buzzer.off();
 //  display_table = NO_TABLE;
 //  update_panel = true;
 //  display_falsestart = false;
 }
 
-// NOTE: to be called from an interrrupt
-void handle_table1_button() {
-  Serial.println("Table 1");
-  hanble_table(TABLE_1);
-}
-
-// NOTE: to be called from an interrrupt
-void handle_table2_button() {
-  Serial.println("Table 2");
-  hanble_table(TABLE_2);
-}
-
-// NOTE: to be called from an interrrupt
-void hanble_table(byte table) {
+void handleTable(byte table) {
+  Serial.print(table);
+  Serial.print(" >> ");
  if (state == STATE_STARTED) {
     Serial.println("Table Pressed");
 //    display_table = table;
@@ -151,5 +170,16 @@ void hanble_table(byte table) {
     buzzer.playFalseStartSound();
 //    display_falsestart = true;
     state = STATE_STOPPED;
+  } else if (state == STATE_INIT) {
+    Serial.println("State Init ***");
+  } else if (state == STATE_STOPPED) {
+    Serial.println("State Stopped ***");
+  } else {
+    Serial.println("Unknown state");   
   }
+}
+
+void handleError(byte errorNo) {
+  Serial.print("Error ");
+  Serial.print(errorNo);
 }
