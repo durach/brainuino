@@ -1,3 +1,5 @@
+#define MAX_TABLES 4
+
 #define PIN_BUTTON_START_60 5
 #define PIN_BUTTON_START_20 6
 #define PIN_BUTTON_RESET 7
@@ -5,6 +7,8 @@
 #define PIN_BUTTON_TABLE_2 1
 
 #define PIN_BUZZER 8
+#define PIN_BUTTON_START 13
+
 #define BUTTON_PRESSED 0
 
 #define STATE_INIT 0
@@ -16,4 +20,4 @@
 #define TABLE_2 2
 #define NO_TABLE 0
 
-#define START_SCREEN_TIME 1.00
+//#define START_SCREEN_TIME 1.00

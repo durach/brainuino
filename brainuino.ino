@@ -1,17 +1,16 @@
 #include "config.h"
-#include "LedPanel.h"
 #include "Timer.h"
 #include "Buzzer.h"
+#include "Lamps.h"
 
-LedPanel led_panel = LedPanel();
 Timer timer = Timer();
 Buzzer buzzer = Buzzer(PIN_BUZZER);
+Lamps lamps = Lamps(PIN_BUTTON_START);
 
 volatile byte state = STATE_INIT;
-volatile byte display_table = NO_TABLE;
 
-bool update_panel = false;
-bool display_falsestart = false;
+//bool update_panel = false;
+//bool display_falsestart = false;
 
 void setup() {
 
@@ -27,7 +26,7 @@ void setup() {
   attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_TABLE_1), handle_table1_button, FALLING);
   attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_TABLE_2), handle_table2_button, FALLING);
 
-  led_panel.setup();
+  lamps.setup();
 
   state = STATE_WAITING;
   Serial.println("Setup Done");
@@ -39,7 +38,7 @@ void loop() {
 
   timer.tick();
   
-  process_panel();
+//  process_panel();
 
 }
 
@@ -57,46 +56,47 @@ void process_buttons() {
   }
 }
 
-void process_panel() {
-  if (timer.is_updated || display_falsestart) {
-    update_panel = true;
-  }
+//void process_panel() {
+//  if (timer.is_updated || display_falsestart) {
+//    update_panel = true;
+//  }
+//
+//  if (update_panel) {
+//    update_panel = false;
+//    
+//    led_panel.drawBegin();
+//
+//    if (state == STATE_STOPPED) {
+//      if (display_falsestart) {
+//        led_panel.drawFalseStart();
+//      } else {
+//        led_panel.drawTime(timer.value);  
+//      }
+//    } else if (state == STATE_STARTED) {
+//      if (timer.value <= START_SCREEN_TIME) {
+//        led_panel.drawTime(timer.value, true);
+//      } else {
+//        led_panel.drawTime(timer.value);
+//      }
+//    }
+//    
+//    if (display_table != NO_TABLE) {
+//       led_panel.drawBrainTable(display_table);
+//    }
+//    
+//    led_panel.drawEnd();
+//    
+//    timer.is_updated = false;
+//  }
+//}
 
-  if (update_panel) {
-    update_panel = false;
-    
-    led_panel.drawBegin();
-
-    if (state == STATE_STOPPED) {
-      if (display_falsestart) {
-        led_panel.drawFalseStart();
-      } else {
-        led_panel.drawTime(timer.value);  
-      }
-    } else if (state == STATE_STARTED) {
-      if (timer.value <= START_SCREEN_TIME) {
-        led_panel.drawTime(timer.value, true);
-      } else {
-        led_panel.drawTime(timer.value);
-      }
-    }
-    
-    if (display_table != NO_TABLE) {
-       led_panel.drawBrainTable(display_table);
-    }
-    
-    led_panel.drawEnd();
-    
-    timer.is_updated = false;
-  }
-}
-
-// NOTE: called from loop
+// NOTE: called from the loop
 void handle_start60_button() {
   Serial.println("Start 60");
   if (state == STATE_WAITING) {
     timer.start(TIMER_START_60);
     buzzer.playStartSound();
+    lamps.onStart();
     state = STATE_STARTED;
   }
 }
@@ -106,6 +106,7 @@ void handle_start20_button() {
   if (state == STATE_WAITING) {
     timer.start(TIMER_START_20);
     buzzer.playStartSound();
+    lamps.onStart();
     state = STATE_STARTED;
   }
 }
@@ -115,9 +116,10 @@ void handle_reset_button() {
   state = STATE_WAITING;
   timer.stop();
   timer.reset();
-  display_table = NO_TABLE;
-  update_panel = true;
-  display_falsestart = false;
+  lamps.allOff();
+//  display_table = NO_TABLE;
+//  update_panel = true;
+//  display_falsestart = false;
 }
 
 // NOTE: to be called from an interrrupt
@@ -136,17 +138,18 @@ void handle_table2_button() {
 void hanble_table(byte table) {
  if (state == STATE_STARTED) {
     Serial.println("Table Pressed");
-    display_table = table;
+//    display_table = table;
     buzzer.off();
     buzzer.playTableSound();
+    lamps.onTable(table);
     state = STATE_STOPPED;
     timer.stop();
   } else if (state == STATE_WAITING) {
     Serial.println("False Start");
-    display_table = table;
+//    display_table = table;
     buzzer.off();
     buzzer.playFalseStartSound();
-    display_falsestart = true;
+//    display_falsestart = true;
     state = STATE_STOPPED;
   }
 }
