@@ -7,20 +7,19 @@
 
 class Timer {
   private:
-    double _start_time;
-    double _old_value;
+    double _startTime;
+    double _oldValue;
     unsigned long _target;
 
   public:
     Timer();
 
     double value;
-    bool is_running;
-    bool is_updated = false;
+    bool isRunning;
+    bool isUpdated = false;
     
     void start(double target);
     void stop();
     void tick();
     void reset();
 };
-
