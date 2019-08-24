@@ -6,8 +6,10 @@
 Timer timer = Timer();
 Buzzer buzzer = Buzzer(PIN_BUZZER);
 
-byte lampPins[] = {PIN_LED_TABLE_1, PIN_LED_TABLE_2, PIN_LED_TABLE_3, PIN_LED_TABLE_4};
+byte lampPins[] = {PIN_LED_TABLE_0, PIN_LED_TABLE_1, PIN_LED_TABLE_2, PIN_LED_TABLE_3};
 Lamps lamps = Lamps(PIN_LED_START, lampPins);
+
+byte tablePins[] = {PIN_BUTTON_TABLE_0, PIN_BUTTON_TABLE_1, PIN_BUTTON_TABLE_2, PIN_BUTTON_TABLE_3};
 
 byte state = STATE_INIT;
 
@@ -22,10 +24,10 @@ void setup() {
   pinMode(PIN_BUTTON_START_60, INPUT_PULLUP);
   pinMode(PIN_BUTTON_START_20, INPUT_PULLUP);
   pinMode(PIN_BUTTON_RESET, INPUT_PULLUP);
-  pinMode(PIN_BUTTON_TABLE_1, INPUT_PULLUP);
-  pinMode(PIN_BUTTON_TABLE_2, INPUT_PULLUP);
-  pinMode(PIN_BUTTON_TABLE_3, INPUT_PULLUP);
-  pinMode(PIN_BUTTON_TABLE_4, INPUT_PULLUP);
+
+  for (byte i = 0; i <= MAX_TABLES; i++) {
+    pinMode(tablePins[i], INPUT_PULLUP);
+  }
 
   lamps.setup();
 
@@ -66,17 +68,10 @@ bool processButtonsTables() {
   // Hack? Use PIND instead
   byte buttons = 0;
 
-  if (digitalRead(PIN_BUTTON_TABLE_1) == BUTTON_PRESSED) {
-    bitSet(buttons, TABLE_1 - 1);
-  }
-  if (digitalRead(PIN_BUTTON_TABLE_2) == BUTTON_PRESSED) {
-    bitSet(buttons, TABLE_2 - 1);
-  }
-  if (digitalRead(PIN_BUTTON_TABLE_3) == BUTTON_PRESSED) {
-    bitSet(buttons, TABLE_3 - 1);
-  }
-  if (digitalRead(PIN_BUTTON_TABLE_4) == BUTTON_PRESSED) {
-    bitSet(buttons, TABLE_4 - 1);
+  for (byte i = 0; i <= MAX_TABLES; i++) {
+    if (digitalRead(tablePins[i]) == BUTTON_PRESSED) {
+      bitSet(buttons, i);
+    }
   }
 
   short table = buttonsGetTableNumber(buttons);

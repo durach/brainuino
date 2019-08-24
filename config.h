@@ -3,17 +3,17 @@
 #define PIN_BUTTON_START_60 5
 #define PIN_BUTTON_START_20 6
 #define PIN_BUTTON_RESET 7
-#define PIN_BUTTON_TABLE_1 0
-#define PIN_BUTTON_TABLE_2 1
-#define PIN_BUTTON_TABLE_3 2
-#define PIN_BUTTON_TABLE_4 3
+#define PIN_BUTTON_TABLE_0 0
+#define PIN_BUTTON_TABLE_1 1
+#define PIN_BUTTON_TABLE_2 2
+#define PIN_BUTTON_TABLE_3 3
 
 #define PIN_BUZZER 8
 #define PIN_LED_START 13
-#define PIN_LED_TABLE_4 12
-#define PIN_LED_TABLE_3 11
-#define PIN_LED_TABLE_2 10
-#define PIN_LED_TABLE_1 9
+#define PIN_LED_TABLE_3 12
+#define PIN_LED_TABLE_2 11
+#define PIN_LED_TABLE_1 10
+#define PIN_LED_TABLE_0 9
 
 #define BUTTON_PRESSED 0
 
@@ -22,12 +22,12 @@
 #define STATE_STARTED 2
 #define STATE_STOPPED 3
 
-#define TABLE_COLLISION -1
-#define NO_TABLE 0
+#define TABLE_COLLISION -2
+#define NO_TABLE -1
+#define TABLE_0 0
 #define TABLE_1 1
 #define TABLE_2 2
 #define TABLE_3 3
-#define TABLE_4 4
 
 //#define START_SCREEN_TIME 1.00
 
