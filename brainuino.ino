@@ -5,7 +5,9 @@
 
 Timer timer = Timer();
 Buzzer buzzer = Buzzer(PIN_BUZZER);
-Lamps lamps = Lamps(PIN_BUTTON_START);
+
+byte lampPins[] = {PIN_LED_TABLE_1, PIN_LED_TABLE_2, PIN_LED_TABLE_3, PIN_LED_TABLE_4};
+Lamps lamps = Lamps(PIN_LED_START, lampPins);
 
 byte state = STATE_INIT;
 
@@ -22,6 +24,8 @@ void setup() {
   pinMode(PIN_BUTTON_RESET, INPUT_PULLUP);
   pinMode(PIN_BUTTON_TABLE_1, INPUT_PULLUP);
   pinMode(PIN_BUTTON_TABLE_2, INPUT_PULLUP);
+  pinMode(PIN_BUTTON_TABLE_3, INPUT_PULLUP);
+  pinMode(PIN_BUTTON_TABLE_4, INPUT_PULLUP);
 
   lamps.setup();
 
@@ -68,7 +72,12 @@ bool processButtonsTables() {
   if (digitalRead(PIN_BUTTON_TABLE_2) == BUTTON_PRESSED) {
     bitSet(buttons, TABLE_2 - 1);
   }
-  // TODO: Add more tables here
+  if (digitalRead(PIN_BUTTON_TABLE_3) == BUTTON_PRESSED) {
+    bitSet(buttons, TABLE_3 - 1);
+  }
+  if (digitalRead(PIN_BUTTON_TABLE_4) == BUTTON_PRESSED) {
+    bitSet(buttons, TABLE_4 - 1);
+  }
 
   short table = buttonsGetTableNumber(buttons);
 
@@ -188,6 +197,7 @@ void handleTable(byte table) {
     buzzer.off();
     buzzer.playFalseStartSound();
 //    display_falsestart = true;
+    lamps.onTable(table);
     state = STATE_STOPPED;
   } else if (state == STATE_INIT) {
     Serial.println("State Init ***");

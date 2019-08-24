@@ -5,14 +5,12 @@ class Lamps {
 
   private:
     byte _pinStart;
-    byte _piFalseStart;
     byte _pinTable[MAX_TABLES];
     
   public:
-    Lamps(byte pinStart);
+    Lamps(byte pinStart, byte pinTable[]);
     void setup();
     void onStart();
-    void onFalseStart();
     void onTable(byte table);
     void allOff();
 };
