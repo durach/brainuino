@@ -21,3 +21,6 @@
 #define NO_TABLE 0
 
 //#define START_SCREEN_TIME 1.00
+
+#define ERROR_NOT_INITED 0
+#define ERROR_UNKNOWN_STATE 1
