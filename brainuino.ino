@@ -141,6 +141,7 @@ void handleButtonReset() {
   timer.reset();
   lamps.allOff();
   buzzer.off();
+  // TODO: Should we display 0:00 ?
   panel.off();
 }
 
