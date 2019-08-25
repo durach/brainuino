@@ -37,21 +37,19 @@ void setup() {
 }
 
 void loop() {
- 
   processButtons();
-
   timer.tick();
-  
   processPanel();
-
 }
 
 void processButtons() {
 
+  // TODO: Add SI Mode
+
   if (state == STATE_STARTED) {
     processButtonsTables() || processButtonReset();
   } else if (state == STATE_WAITING) {
-    processButtonsTables() || processButtonsStart();
+    processButtonsTables() || processButtonsStart(); // Probably we need to add reset here to switch to SI more
   } else if (state == STATE_STOPPED) {
     processButtonReset();
   } else if (state == STATE_INIT) {
@@ -90,7 +88,6 @@ bool processButtonsTables() {
 }
 
 bool processButtonsStart() {
-  // TODO: Add protection against simultation tracking
   if (digitalRead(PIN_BUTTON_START_60) == BUTTON_PRESSED) {
     handleButtonStart60();
     return true;
@@ -152,7 +149,6 @@ void handleTable(byte table) {
   Serial.print(" >> ");
  if (state == STATE_STARTED) {
     Serial.println("Table Pressed");
-//    display_table = table;
     buzzer.off();
     buzzer.playTableSound();
     lamps.onTable(table);
@@ -160,7 +156,6 @@ void handleTable(byte table) {
     timer.stop();
   } else if (state == STATE_WAITING) {
     Serial.println("False Start");
-//    display_table = table;
     buzzer.off();
     buzzer.playFalseStartSound();
     panel.displayFalseStart();
@@ -176,6 +171,7 @@ void handleTable(byte table) {
 }
 
 void handleError(byte errorNo) {
+  // TODO: show error state on the screen
   Serial.print("Error ");
   Serial.println(errorNo);
   state = STATE_STOPPED;

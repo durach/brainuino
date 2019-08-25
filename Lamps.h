@@ -5,7 +5,7 @@ class Lamps {
 
   private:
     byte _pinStart;
-    byte _pinTable[MAX_TABLES];
+    byte* _pinTable; // aka byte _pinTable[MAX_TABLES]
     
   public:
     Lamps(byte pinStart, byte pinTable[]);

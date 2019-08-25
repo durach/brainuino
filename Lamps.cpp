@@ -1,12 +1,8 @@
 #include "Lamps.h"
 
 Lamps::Lamps(byte pinStart, byte pinTable[]) {
-   _pinStart = pinStart;
-   
-   // TODO find out how to copy
-  for (byte i = 0; i < MAX_TABLES; i++) {
-    _pinTable[i] = pinTable[i];
-  }
+  _pinStart = pinStart;
+  _pinTable = pinTable;
 }
 
 void Lamps::setup() {
