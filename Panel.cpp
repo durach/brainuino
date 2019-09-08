@@ -8,9 +8,11 @@ Panel::Panel(byte pinCLK, byte pinDIO) {
 }
 
 void Panel::setup() {
-   _tm.init(D4056A);
+   //_tm.init(D4056A);
+   _tm.init();
    _tm.set(PANEL_BRIGHTNESS);
-   _tm.display(0);
+//   _tm.display(0);
+   _tm.display(0, 0x1A);
 }
 
 void Panel::displayTime(float time) {
@@ -18,7 +20,8 @@ void Panel::displayTime(float time) {
 }
 
 void Panel::displayFalseStart() {
-  _tm.display(99.99);
+    int8_t msg[4] = {0x7F, 0xF, 0xA, 0x7F};
+    _tm.display(msg);
 }
 
 void Panel::off() {
