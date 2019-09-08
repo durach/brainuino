@@ -43,6 +43,7 @@ void loop() {
   processButtons();
   timer.tick();
   processPanel();
+  processStartLampOff();
 }
 
 void processButtons() {
@@ -116,6 +117,12 @@ void processPanel() {
   }
         
   timer.isUpdated = false;
+}
+
+void processStartLampOff() {
+  if ((state == STATE_STARTED) && (timer.value > START_LAMP_DURATION) && (lamps.isStartOn)) {
+    lamps.offStart();
+  }
 }
 
 void handleButtonStart60() {

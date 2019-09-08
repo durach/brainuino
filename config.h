@@ -1,6 +1,7 @@
 #include <Arduino.h>
 
 #define MAX_TABLES 4
+#define START_LAMP_DURATION 1 // seconds
 
 #define PIN_BUTTON_TABLE_0 4
 #define PIN_BUTTON_TABLE_1 5
