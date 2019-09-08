@@ -34,6 +34,9 @@ void setup() {
 
   state = STATE_WAITING;
   Serial.println("Setup Done");
+
+  pinMode(13, OUTPUT);
+
 }
 
 void loop() {
@@ -53,9 +56,9 @@ void processButtons() {
   } else if (state == STATE_STOPPED) {
     processButtonReset();
   } else if (state == STATE_INIT) {
-    handleError(ERROR_NOT_INITED);    
+    handleError(ERROR_NOT_INITED, "");    
   } else {
-    handleError(ERROR_UNKNOWN_STATE);
+    handleError(ERROR_UNKNOWN_STATE, "");
   }
 
 }
@@ -78,7 +81,8 @@ bool processButtonsTables() {
   }
 
   if (table == TABLE_COLLISION) {
-    handleError(ERROR_BUTTONS_COLLISION);
+    String description = String(buttons, BIN);
+    handleError(ERROR_BUTTONS_COLLISION, description);
     return true;
   }
 
@@ -171,10 +175,13 @@ void handleTable(byte table) {
   }
 }
 
-void handleError(byte errorNo) {
+void handleError(byte errorNo, String description) {
   // TODO: show error state on the screen
   Serial.print("Error ");
-  Serial.println(errorNo);
+  Serial.print(errorNo);
+  Serial.print(" ");
+  Serial.print(description);
+  Serial.println("$");
   state = STATE_STOPPED;
 }
 
