@@ -1,29 +1,25 @@
 #include "Panel.h"
-#include "TM1637.h"
+#include "TM1637Display.h"
 
-Panel::Panel(byte pinCLK, byte pinDIO) {
-   _pinCLK = pinCLK;
-   _pinDIO = pinDIO;
-   _tm = TM1637(_pinCLK, _pinDIO);
+Panel::Panel(byte pinCLK, byte pinDIO)  : _tm(pinCLK, pinDIO) {
+  _pinCLK = pinCLK;
+  _pinDIO = pinDIO;
 }
 
 void Panel::setup() {
-   //_tm.init(D4056A);
-   _tm.init();
-   _tm.set(PANEL_BRIGHTNESS);
-//   _tm.display(0);
-   _tm.display(0, 0x1A);
+  _tm.setBrightness(PANEL_BRIGHTNESS);
+  _tm.showNumberDecEx(0, 0b01000000, true);
 }
 
 void Panel::displayTime(float time) {
-  _tm.display(time);
+  _tm.showNumberDecEx(time * 100, 0b01000000, true);
 }
 
 void Panel::displayFalseStart() {
-    int8_t msg[4] = {0x7F, 0xF, 0xA, 0x7F};
-    _tm.display(msg);
+  _tm.clear();
+  _tm.showNumberHexEx(0xFA, 0, false, 2, 1);
 }
 
 void Panel::off() {
-  _tm.clearDisplay();
+  _tm.clear();
 }

@@ -1,6 +1,6 @@
 #include <Arduino.h>
 #include "config.h"
-#include "TM1637.h"
+#include "TM1637Display.h"
 
 #define PANEL_BRIGHTNESS 4
 
@@ -9,7 +9,7 @@ class Panel {
   private:
     byte _pinCLK;
     byte _pinDIO;
-    TM1637 _tm;
+    TM1637Display _tm;
     
   public:
     Panel(byte pinCLK, byte pinDIO);
