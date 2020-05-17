@@ -18,6 +18,12 @@ Panel panel = Panel(PIN_PANEL_CLK, PIN_PANEL_DIO);
 
 byte state = STATE_INIT;
 
+unsigned long this_loop_start = 0;
+unsigned long profile_1 = 0;
+unsigned long profile_2 = 0;
+unsigned long profile_3 = 0;
+unsigned long profile_4 = 0;
+
 void setup() {
 
   Serial.begin(9600);
@@ -37,15 +43,46 @@ void setup() {
   state = STATE_WAITING;
   Serial.println("Setup Done");
 
-  pinMode(13, OUTPUT);
-
 }
 
 void loop() {
+  this_loop_start = millis();
+ 
   processButtons();
+
+  profile_1 = millis();
+
   timer.tick();
+  profile_2 = millis();
+
+  bool is_updated = timer.isUpdated;
+
   processPanel();
+  profile_3 = millis();
+  
   processStartLampOff();
+
+  profile_4 = millis();
+
+  if (state == STATE_STARTED) {
+    Serial.print("this_loop_start: ");
+    Serial.print(this_loop_start);
+    Serial.print(", 1+: ");
+    Serial.print(profile_1-this_loop_start);
+    Serial.print(", 2+: ");
+    Serial.print(profile_2-profile_1);
+    Serial.print(", 3+: ");
+    Serial.print(profile_3-profile_2);
+    Serial.print(", 4+: ");
+    Serial.print(profile_4-profile_3);
+    Serial.print(", now+: ");
+    Serial.print(millis()-profile_4);
+    Serial.print(", is_updated: ");
+    Serial.print(is_updated);
+    Serial.print(", timer.value: ");
+    Serial.print(timer.value);
+    Serial.println("$");
+  }
 }
 
 void processButtons() {
@@ -185,13 +222,15 @@ void handleTable(byte table) {
 }
 
 void handleError(byte errorNo, String description) {
-  // TODO: show error state on the screen
-  Serial.print("Error ");
+  state = STATE_STOPPED;
+  timer.stop(false);
+  panel.error(errorNo);
+
+  Serial.print("Error #");
   Serial.print(errorNo);
-  Serial.print(" ");
+  Serial.print(", <");
   Serial.print(description);
   Serial.println("$");
-  state = STATE_STOPPED;
 }
 
 short buttonsGetTableNumber(byte buttons) {

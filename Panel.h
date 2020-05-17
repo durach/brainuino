@@ -17,4 +17,5 @@ class Panel {
     void displayTime(float time);
     void displayFalseStart();
     void off();
+    void error(short error);
 };

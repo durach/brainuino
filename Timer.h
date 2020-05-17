@@ -3,13 +3,13 @@
 #define TIMER_FINISH 0
 
 #define TIMER_MILLISECONDS_IN_SECOND 1000.0
-#define TIMER_PERCISION 0.01
+#define TIMER_PRECISION 0.05
 
 class Timer {
   private:
-    double _startTime;
+    unsigned long _startTime;
     double _oldValue;
-    unsigned long _target;
+    double _target;
 
   public:
     Timer();
@@ -19,7 +19,7 @@ class Timer {
     bool isUpdated = false;
     
     void start(double target);
-    void stop();
+    void stop(bool updated = true);
     void tick();
     void reset();
 };

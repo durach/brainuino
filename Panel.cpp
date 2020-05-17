@@ -1,7 +1,14 @@
 #include "Panel.h"
 #include "TM1637Display.h"
 
-Panel::Panel(byte pinCLK, byte pinDIO)  : _tm(pinCLK, pinDIO) {
+const uint8_t SEG_ERR[] = {
+  SEG_A | SEG_F | SEG_G | SEG_E | SEG_D,    // E 
+  SEG_G | SEG_E,                            // r
+  SEG_G | SEG_E,                            // r
+  0,
+};
+
+Panel::Panel(byte pinCLK, byte pinDIO)  : _tm(pinCLK, pinDIO, 100) {
   _pinCLK = pinCLK;
   _pinDIO = pinDIO;
 }
@@ -22,4 +29,10 @@ void Panel::displayFalseStart() {
 
 void Panel::off() {
   _tm.clear();
+}
+
+void Panel::error(short number) {
+  _tm.clear();
+  _tm.setSegments(SEG_ERR);
+  _tm.showNumberDec(number, false, 1, 3);
 }
