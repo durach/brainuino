@@ -12,9 +12,9 @@ void Timer::start(double target) {
   isUpdated = true;
 }
 
-void Timer::stop() {
+void Timer::stop(bool updated) {
   isRunning = false;
-  isUpdated = true;
+  isUpdated = updated;
 }
 
 void Timer::tick() {
@@ -30,7 +30,7 @@ void Timer::tick() {
     isUpdated = true;
   }
   
-  if (!isUpdated && (abs(value - _oldValue) > TIMER_PERCISION)) {
+  if ((value - _oldValue) > TIMER_PRECISION) {
     _oldValue = value;
     isUpdated = true;
   }
@@ -38,5 +38,7 @@ void Timer::tick() {
 
 void Timer::reset() {
   value = 0;
+  _oldValue = 0;
   isRunning = false;
+  isUpdated = true;
 }
