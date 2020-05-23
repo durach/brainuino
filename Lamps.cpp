@@ -23,7 +23,7 @@ void Lamps::offStart() {
 }
 
 void Lamps::onTable(byte table) {
-  digitalWrite(this->_pinTable[table-1], HIGH);
+  digitalWrite(this->_pinTable[table], HIGH);
 }
 
 void Lamps::allOff() {
