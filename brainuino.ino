@@ -54,43 +54,16 @@ void setup() {
 }
 
 void loop() {
-  this_loop_start = millis();
- 
   processButtons();
-
-  profile_1 = millis();
-
   timer.tick();
-  profile_2 = millis();
+  processTimer();
 
-  bool is_updated = timer.isUpdated;
-
-  processPanel();
-  profile_3 = millis();
-  
-  processStartLampOff();
-
-  profile_4 = millis();
-
-  if (state == STATE_STARTED) {
-    Serial.print("this_loop_start: ");
-    Serial.print(this_loop_start);
-    Serial.print(", 1+: ");
-    Serial.print(profile_1-this_loop_start);
-    Serial.print(", 2+: ");
-    Serial.print(profile_2-profile_1);
-    Serial.print(", 3+: ");
-    Serial.print(profile_3-profile_2);
-    Serial.print(", 4+: ");
-    Serial.print(profile_4-profile_3);
-    Serial.print(", now+: ");
-    Serial.print(millis()-profile_4);
-    Serial.print(", is_updated: ");
-    Serial.print(is_updated);
-    Serial.print(", timer.value: ");
-    Serial.print(timer.value);
-    Serial.println("$");
+  if ((state == STATE_STARTED) && timer.isUpdated) {
+    Serial.println(timer.value);
   }
+
+  processPanel();  
+  processStartLampOff();
 }
 
 void processButtons() {
@@ -152,6 +125,12 @@ void processPanel() {
 void processStartLampOff() {
   if ((state == STATE_STARTED) && (timer.value > START_LAMP_DURATION) && (lamps.isStartOn)) {
     lamps.offStart();
+  }
+}
+
+void processTimer() {
+  if ((state == STATE_STARTED) && timer.isFinished) {
+    handleFinish();
   }
 }
 
@@ -260,4 +239,10 @@ void handleError(byte errorNo, String description) {
   Serial.print(", <");
   Serial.print(description);
   Serial.println("$");
+}
+
+void handleFinish() {
+  Serial.println("Finish");
+  state = STATE_STOPPED;
+  buzzer.playFinishSound();
 }

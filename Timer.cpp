@@ -10,6 +10,7 @@ void Timer::start(double target) {
   _startTime = millis();
   isRunning = true;
   isUpdated = true;
+  isFinished = false;
 }
 
 void Timer::stop(bool updated) {
@@ -27,6 +28,7 @@ void Timer::tick() {
   if (value >= _target) {
     value = _target;
     isRunning = false;
+    isFinished = true;
     isUpdated = true;
   }
   
@@ -40,5 +42,6 @@ void Timer::reset() {
   value = 0;
   _oldValue = 0;
   isRunning = false;
+  isFinished = false;
   isUpdated = true;
 }
