@@ -1,6 +1,5 @@
 #define TIMER_START_60 60.0
 #define TIMER_START_20 20.0
-#define TIMER_FINISH 0
 
 #define TIMER_MILLISECONDS_IN_SECOND 1000.0
 #define TIMER_PRECISION 0.05
@@ -15,8 +14,9 @@ class Timer {
     Timer();
 
     double value;
-    bool isRunning;
+    bool isRunning = false;
     bool isUpdated = false;
+    bool isFinished = false;
     
     void start(double target);
     void stop(bool updated = true);
