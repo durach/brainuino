@@ -16,7 +16,8 @@ byte tablePins[] = {PIN_BUTTON_TABLE_0, PIN_BUTTON_TABLE_1, PIN_BUTTON_TABLE_2, 
 
 Panel panel = Panel(PIN_PANEL_CLK, PIN_PANEL_DIO);
 
-byte state = STATE_INIT;
+volatile byte state = STATE_INIT;
+volatile byte state_table = NO_TABLE;
 
 unsigned long this_loop_start = 0;
 unsigned long profile_1 = 0;
@@ -40,9 +41,16 @@ void setup() {
   lamps.setup();
   panel.setup();
 
-  state = STATE_WAITING;
-  Serial.println("Setup Done");
+  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_TABLE_0), handleTableButton0, FALLING);
+  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_TABLE_1), handleTableButton1, FALLING);
+  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_TABLE_2), handleTableButton2, FALLING);
+  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_TABLE_3), handleTableButton3, FALLING);
 
+  state = STATE_WAITING;
+  state_table = NO_TABLE;
+
+  Serial.println("Setup Done");
+  
 }
 
 void loop() {
@@ -105,28 +113,11 @@ void processButtons() {
 
 bool processButtonsTables() {
   
-  // Hack? Use PIND instead
-  byte buttons = 0;
-
-  for (byte i = 0; i < MAX_TABLES; i++) {
-    if (digitalRead(tablePins[i]) == BUTTON_PRESSED) {
-      bitSet(buttons, i);
-    }
-  }
-
-  short table = buttonsGetTableNumber(buttons);
-
-  if (table == NO_TABLE) {
+  if (state_table == NO_TABLE) {
     return false;
   }
 
-  if (table == TABLE_COLLISION) {
-    String description = String(buttons, BIN);
-    handleError(ERROR_BUTTONS_COLLISION, description);
-    return true;
-  }
-
-  handleTable(table);
+  handleTable(state_table);
   return true;
 
 }
@@ -187,12 +178,50 @@ void handleButtonStart20() {
 void handleButtonReset() {
   Serial.println("Reset");
   state = STATE_WAITING;
+  state_table = NO_TABLE;
   timer.stop();
   timer.reset();
   lamps.allOff();
   buzzer.off();
   // TODO: Should we display 0:00 ?
   panel.off();
+}
+
+// NOTE: to be called from an interrrupt
+void handleTableButton0() {
+  handleTableButton(TABLE_0);
+}
+
+// NOTE: to be called from an interrrupt
+void handleTableButton1() {
+  handleTableButton(TABLE_1);
+}
+
+// NOTE: to be called from an interrrupt
+void handleTableButton2() {
+  handleTableButton(TABLE_2);
+}
+
+// NOTE: to be called from an interrrupt
+void handleTableButton3() {
+  handleTableButton(TABLE_3);
+}
+
+// NOTE: to be called from an interrrupt
+void handleTableButton(byte table) {
+  Serial.print("Detected ");
+  Serial.print(table);
+  Serial.print(". ");
+
+  if (state_table != NO_TABLE) {
+    Serial.print("Table ");
+    Serial.print(state_table);
+    Serial.println(" already pressed. Ignoring");
+    return;
+  }
+
+  state_table = table;
+  Serial.println();
 }
 
 void handleTable(byte table) {
@@ -231,30 +260,4 @@ void handleError(byte errorNo, String description) {
   Serial.print(", <");
   Serial.print(description);
   Serial.println("$");
-}
-
-short buttonsGetTableNumber(byte buttons) {
-
-  if (buttons == 0) {
-    return NO_TABLE;
-  }
-
-  byte table = 0;
-  byte bit_number = 1;
-  
-  while(buttons > 0) {
-    if (buttons & 1) {
-      if (table == 0) {
-        table = bit_number;
-      } else {
-        // Two or more buttons simultaniously pressed
-        return TABLE_COLLISION;
-      }
-    }
-
-    buttons = buttons >> 1;
-    bit_number++;
-  }
-
-  return table;
 }
