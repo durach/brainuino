@@ -2,7 +2,7 @@
 #define TIMER_START_20 20.0
 
 #define TIMER_MILLISECONDS_IN_SECOND 1000.0
-#define TIMER_PRECISION 0.05
+#define TIMER_PRECISION 1.0
 
 class Timer {
   private:
