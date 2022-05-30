@@ -19,12 +19,6 @@ Panel panel = Panel(PIN_PANEL_CLK, PIN_PANEL_DIO);
 volatile byte state = STATE_INIT;
 volatile byte state_table = NO_TABLE;
 
-unsigned long this_loop_start = 0;
-unsigned long profile_1 = 0;
-unsigned long profile_2 = 0;
-unsigned long profile_3 = 0;
-unsigned long profile_4 = 0;
-
 void setup() {
 
   Serial.begin(9600);
