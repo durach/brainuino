@@ -36,8 +36,7 @@
 #define STATE_STARTED 2
 #define STATE_STOPPED 3
 
-#define TABLE_COLLISION byte(-2)
-#define NO_TABLE byte(-1)
+#define NO_TABLE int8_t(-1)
 #define TABLE_0 0
 #define TABLE_1 1
 #define TABLE_2 2

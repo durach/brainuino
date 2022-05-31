@@ -10,10 +10,10 @@
 class Buzzer {
 
   private:
-    byte _pin;
+    int8_t _pin;
 
   public:
-    Buzzer(byte pin);
+    Buzzer(int8_t pin);
     
     void playStartSound();
     void playTableSound();

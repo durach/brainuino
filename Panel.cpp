@@ -8,7 +8,7 @@ const uint8_t SEG_ERR[] = {
   0,
 };
 
-Panel::Panel(byte pinCLK, byte pinDIO)  : _tm(pinCLK, pinDIO, 100) {
+Panel::Panel(int8_t pinCLK, int8_t pinDIO)  : _tm(pinCLK, pinDIO, 100) {
   _pinCLK = pinCLK;
   _pinDIO = pinDIO;
 }
@@ -31,7 +31,7 @@ void Panel::off() {
   _tm.clear();
 }
 
-void Panel::error(short number) {
+void Panel::error(int8_t number) {
   _tm.clear();
   _tm.setSegments(SEG_ERR);
   _tm.showNumberDec(number, false, 1, 3);
