@@ -1,5 +1,3 @@
-#include <Arduino.h>
-
 #define MAX_TABLES 6
 #define START_LAMP_DURATION 1 // seconds
 

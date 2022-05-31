@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 // Requires: https://github.com/avishorp/TM1637/
 
 #include "config.h"
