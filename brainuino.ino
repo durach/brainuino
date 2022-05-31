@@ -49,7 +49,7 @@ void setup() {
   panel.setup();
 
   PCMSK0 = B00111111; // enable PCINT0..7
-  PCICR = B00000001;  // enable PCIE0 group
+  enableTableButtons();
 
   state = STATE_WAITING;
   state_buttons_waiting = true;
@@ -150,7 +150,7 @@ void processTimer() {
 }
 
 void handleButtonStart60() {
-  Serial.println("Start 60");
+  Serial.println("\nStart 60");
   if (state == STATE_WAITING) {
     timer.start(TIMER_START_60);
     buzzer.playStartSound();
@@ -160,7 +160,7 @@ void handleButtonStart60() {
 }
 
 void handleButtonStart20() {
-  Serial.println("Start 20");
+  Serial.println("\nStart 20");
   if (state == STATE_WAITING) {
     timer.start(TIMER_START_20);
     buzzer.playStartSound();
@@ -170,7 +170,7 @@ void handleButtonStart20() {
 }
 
 void handleButtonReset() {
-  Serial.println("Reset");
+  Serial.println("\nReset");
   state = STATE_WAITING;
   state_buttons_waiting = true;
   timer.stop();
@@ -179,6 +179,7 @@ void handleButtonReset() {
   buzzer.off();
   // TODO: Should we display 0:00 ?
   panel.off();
+  enableTableButtons();
 }
 
 void handleTable(byte table) {
@@ -225,6 +226,14 @@ void handleFinish() {
   buzzer.playFinishSound();
 }
 
+void enableTableButtons() {
+  PCICR |= B00000001;  // enable PCIE0 group
+}
+
+void disableTableButtons() {
+  PCICR &= ~B00000001;  // disable PCIE0 group
+}
+
 ISR(PCINT0_vect) {
   uint8_t buttons;
   buttons = PINB;
@@ -232,7 +241,7 @@ ISR(PCINT0_vect) {
   if (buttons == STATE_BUTTONS_INIT) {
     Serial.print(". ");      
   } else if (state_buttons_waiting) {
-    buttons = PINB;
+    disableTableButtons();
     state_buttons_waiting = false;
     state_buttons = buttons;
     Serial.print("+ ");  
