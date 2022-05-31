@@ -9,10 +9,10 @@
 Timer timer = Timer();
 Buzzer buzzer = Buzzer(PIN_BUZZER);
 
-byte lampPins[] = {PIN_LED_TABLE_0, PIN_LED_TABLE_1, PIN_LED_TABLE_2, PIN_LED_TABLE_3, PIN_LED_TABLE_4, PIN_LED_TABLE_5};
+int8_t lampPins[] = {PIN_LED_TABLE_0, PIN_LED_TABLE_1, PIN_LED_TABLE_2, PIN_LED_TABLE_3, PIN_LED_TABLE_4, PIN_LED_TABLE_5};
 Lamps lamps = Lamps(PIN_LED_START, lampPins);
 
-byte tablePins[] = {PIN_BUTTON_TABLE_0, PIN_BUTTON_TABLE_1, PIN_BUTTON_TABLE_2, PIN_BUTTON_TABLE_3, PIN_BUTTON_TABLE_4, PIN_BUTTON_TABLE_5};
+int8_t tablePins[] = {PIN_BUTTON_TABLE_0, PIN_BUTTON_TABLE_1, PIN_BUTTON_TABLE_2, PIN_BUTTON_TABLE_3, PIN_BUTTON_TABLE_4, PIN_BUTTON_TABLE_5};
 
 Panel panel = Panel(PIN_PANEL_CLK, PIN_PANEL_DIO);
 
@@ -25,12 +25,12 @@ Panel panel = Panel(PIN_PANEL_CLK, PIN_PANEL_DIO);
 #define STATE_BUTTONS_TABLE_5_PRESSED B00011111
 
 // TODO Generate this array?
-byte buttonsPressed[] = {STATE_BUTTONS_TABLE_0_PRESSED, STATE_BUTTONS_TABLE_1_PRESSED, STATE_BUTTONS_TABLE_2_PRESSED, STATE_BUTTONS_TABLE_3_PRESSED, STATE_BUTTONS_TABLE_4_PRESSED, STATE_BUTTONS_TABLE_5_PRESSED}; 
+int8_t buttonsPressed[] = {STATE_BUTTONS_TABLE_0_PRESSED, STATE_BUTTONS_TABLE_1_PRESSED, STATE_BUTTONS_TABLE_2_PRESSED, STATE_BUTTONS_TABLE_3_PRESSED, STATE_BUTTONS_TABLE_4_PRESSED, STATE_BUTTONS_TABLE_5_PRESSED}; 
 
-volatile byte state_buttons = STATE_BUTTONS_INIT;
-volatile byte state_buttons_waiting = true;
+volatile int8_t state_buttons = STATE_BUTTONS_INIT;
+volatile int8_t state_buttons_waiting = true;
 
-byte state = STATE_INIT;
+int8_t state = STATE_INIT;
 
 void setup() {
 
@@ -41,7 +41,7 @@ void setup() {
   pinMode(PIN_BUTTON_START_20, INPUT_PULLUP);
   pinMode(PIN_BUTTON_RESET, INPUT_PULLUP);
 
-  for (byte i = 0; i < MAX_TABLES; i++) {
+  for (int8_t i = 0; i < MAX_TABLES; i++) {
     pinMode(tablePins[i], INPUT_PULLUP);
   }
 
@@ -182,7 +182,7 @@ void handleButtonReset() {
   enableTableButtons();
 }
 
-void handleTable(byte table) {
+void handleTable(int8_t table) {
   Serial.print(table);
   Serial.print(" >> ");
  if (state == STATE_STARTED) {

@@ -4,6 +4,9 @@
 #define TIMER_MILLISECONDS_IN_SECOND 1000.0
 #define TIMER_PRECISION 1.0
 
+// TODO: do we need double here?
+// TODO: try do not use floats here at all
+
 class Timer {
   private:
     unsigned long _startTime;

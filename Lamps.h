@@ -4,17 +4,17 @@
 class Lamps {
 
   private:
-    byte _pinStart;
-    byte* _pinTable; // aka byte _pinTable[MAX_TABLES]
+    int8_t _pinStart;
+    int8_t* _pinTable; // aka byte _pinTable[MAX_TABLES]
 
   public:
     bool isStartOn = false;
     
   public:
-    Lamps(byte pinStart, byte pinTable[]);
+    Lamps(int8_t pinStart, int8_t pinTable[]);
     void setup();
     void onStart();
     void offStart();
-    void onTable(byte table);
+    void onTable(int8_t table);
     void allOff();
 };

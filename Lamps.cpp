@@ -1,13 +1,13 @@
 #include "Lamps.h"
 
-Lamps::Lamps(byte pinStart, byte pinTable[]) {
+Lamps::Lamps(int8_t pinStart, int8_t pinTable[]) {
   this->_pinStart = pinStart;
   this->_pinTable = pinTable;
 }
 
 void Lamps::setup() {
   pinMode(this->_pinStart, OUTPUT);
-  for (byte i = 0; i < MAX_TABLES; i++) {
+  for (int8_t i = 0; i < MAX_TABLES; i++) {
     pinMode(this->_pinTable[i], OUTPUT); 
   }
 }
@@ -22,13 +22,13 @@ void Lamps::offStart() {
   this->isStartOn = true;
 }
 
-void Lamps::onTable(byte table) {
+void Lamps::onTable(int8_t table) {
   digitalWrite(this->_pinTable[table], HIGH);
 }
 
 void Lamps::allOff() {
   this->offStart();
-  for (byte i = 0; i < MAX_TABLES; i++) {
+  for (int8_t i = 0; i < MAX_TABLES; i++) {
     digitalWrite(this->_pinTable[i], LOW);
   }
 }

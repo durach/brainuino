@@ -7,15 +7,15 @@
 class Panel {
 
   private:
-    byte _pinCLK;
-    byte _pinDIO;
+    int8_t _pinCLK;
+    int8_t _pinDIO;
     TM1637Display _tm;
     
   public:
-    Panel(byte pinCLK, byte pinDIO);
+    Panel(int8_t pinCLK, int8_t pinDIO);
     void setup();
     void displayTime(float time);
     void displayFalseStart();
     void off();
-    void error(short error);
+    void error(int8_t error);
 };
