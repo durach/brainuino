@@ -9,15 +9,28 @@
 Timer timer = Timer();
 Buzzer buzzer = Buzzer(PIN_BUZZER);
 
-byte lampPins[] = {PIN_LED_TABLE_0, PIN_LED_TABLE_1, PIN_LED_TABLE_2, PIN_LED_TABLE_3};
+byte lampPins[] = {PIN_LED_TABLE_0, PIN_LED_TABLE_1, PIN_LED_TABLE_2, PIN_LED_TABLE_3, PIN_LED_TABLE_4, PIN_LED_TABLE_5};
 Lamps lamps = Lamps(PIN_LED_START, lampPins);
 
-byte tablePins[] = {PIN_BUTTON_TABLE_0, PIN_BUTTON_TABLE_1, PIN_BUTTON_TABLE_2, PIN_BUTTON_TABLE_3};
+byte tablePins[] = {PIN_BUTTON_TABLE_0, PIN_BUTTON_TABLE_1, PIN_BUTTON_TABLE_2, PIN_BUTTON_TABLE_3, PIN_BUTTON_TABLE_4, PIN_BUTTON_TABLE_5};
 
 Panel panel = Panel(PIN_PANEL_CLK, PIN_PANEL_DIO);
 
-volatile byte state = STATE_INIT;
-volatile byte state_table = NO_TABLE;
+#define STATE_BUTTONS_INIT B00111111
+#define STATE_BUTTONS_TABLE_0_PRESSED B00111110
+#define STATE_BUTTONS_TABLE_1_PRESSED B00111101
+#define STATE_BUTTONS_TABLE_2_PRESSED B00111011
+#define STATE_BUTTONS_TABLE_3_PRESSED B00110111
+#define STATE_BUTTONS_TABLE_4_PRESSED B00101111
+#define STATE_BUTTONS_TABLE_5_PRESSED B00011111
+
+// TODO Generate this array?
+byte buttonsPressed[] = {STATE_BUTTONS_TABLE_0_PRESSED, STATE_BUTTONS_TABLE_1_PRESSED, STATE_BUTTONS_TABLE_2_PRESSED, STATE_BUTTONS_TABLE_3_PRESSED, STATE_BUTTONS_TABLE_4_PRESSED, STATE_BUTTONS_TABLE_5_PRESSED}; 
+
+volatile byte state_buttons = STATE_BUTTONS_INIT;
+volatile byte state_buttons_waiting = true;
+
+byte state = STATE_INIT;
 
 void setup() {
 
@@ -35,13 +48,11 @@ void setup() {
   lamps.setup();
   panel.setup();
 
-  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_TABLE_0), handleTableButton0, FALLING);
-  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_TABLE_1), handleTableButton1, FALLING);
-  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_TABLE_2), handleTableButton2, FALLING);
-  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_TABLE_3), handleTableButton3, FALLING);
+  PCMSK0 = B00111111; // enable PCINT0..7
+  PCICR = B00000001;  // enable PCIE0 group
 
   state = STATE_WAITING;
-  state_table = NO_TABLE;
+  state_buttons_waiting = true;
 
   Serial.println("Setup Done");
   
@@ -80,13 +91,23 @@ void processButtons() {
 
 bool processButtonsTables() {
   
-  if (state_table == NO_TABLE) {
+  if (state_buttons_waiting) {
     return false;
   }
 
-  handleTable(state_table);
-  return true;
+  Serial.print("Processing: ");
+  Serial.println(state_buttons, BIN);
+  
+  for (int i = 0; i < MAX_TABLES; i++) {
+    if (state_buttons == buttonsPressed[i]) {
+      handleTable(i);
+      return true;
+    }    
+  }
 
+  handleError(ERROR_BUTTONS, ""); // Add buttons here as param 
+
+  return true;
 }
 
 bool processButtonsStart() {
@@ -151,50 +172,13 @@ void handleButtonStart20() {
 void handleButtonReset() {
   Serial.println("Reset");
   state = STATE_WAITING;
-  state_table = NO_TABLE;
+  state_buttons_waiting = true;
   timer.stop();
   timer.reset();
   lamps.allOff();
   buzzer.off();
   // TODO: Should we display 0:00 ?
   panel.off();
-}
-
-// NOTE: to be called from an interrrupt
-void handleTableButton0() {
-  handleTableButton(TABLE_0);
-}
-
-// NOTE: to be called from an interrrupt
-void handleTableButton1() {
-  handleTableButton(TABLE_1);
-}
-
-// NOTE: to be called from an interrrupt
-void handleTableButton2() {
-  handleTableButton(TABLE_2);
-}
-
-// NOTE: to be called from an interrrupt
-void handleTableButton3() {
-  handleTableButton(TABLE_3);
-}
-
-// NOTE: to be called from an interrrupt
-void handleTableButton(byte table) {
-  Serial.print("Detected ");
-  Serial.print(table);
-  Serial.print(". ");
-
-  if (state_table != NO_TABLE) {
-    Serial.print("Table ");
-    Serial.print(state_table);
-    Serial.println(" already pressed. Ignoring");
-    return;
-  }
-
-  state_table = table;
-  Serial.println();
 }
 
 void handleTable(byte table) {
@@ -239,4 +223,21 @@ void handleFinish() {
   Serial.println("Finish");
   state = STATE_STOPPED;
   buzzer.playFinishSound();
+}
+
+ISR(PCINT0_vect) {
+  uint8_t buttons;
+  buttons = PINB;
+
+  if (buttons == STATE_BUTTONS_INIT) {
+    Serial.print(". ");      
+  } else if (state_buttons_waiting) {
+    buttons = PINB;
+    state_buttons_waiting = false;
+    state_buttons = buttons;
+    Serial.print("+ ");  
+  } else {
+    Serial.print("- ");  
+  }
+  Serial.println(buttons, BIN);
 }
