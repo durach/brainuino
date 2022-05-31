@@ -17,12 +17,12 @@
 
 #define PIN_BUZZER 25
 
-#define PIN_LED_TABLE_0 3
-#define PIN_LED_TABLE_1 4
-#define PIN_LED_TABLE_2 5
-#define PIN_LED_TABLE_3 6
-#define PIN_LED_TABLE_4 7
-#define PIN_LED_TABLE_5 8
+#define PIN_LED_TABLE_0 3 // PCINT0
+#define PIN_LED_TABLE_1 4 // PCINT1
+#define PIN_LED_TABLE_2 5 // PCINT2
+#define PIN_LED_TABLE_3 6 // PCINT3
+#define PIN_LED_TABLE_4 7 // PCINT4
+#define PIN_LED_TABLE_5 8 // PCINT5
 
 #define PIN_LED_START 15
 
