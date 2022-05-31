@@ -82,9 +82,9 @@ void processButtons() {
   } else if (state == STATE_STOPPED) {
     processButtonReset();
   } else if (state == STATE_INIT) {
-    handleError(ERROR_NOT_INITED, "");    
+    handleError(ERROR_NOT_INITED);    
   } else {
-    handleError(ERROR_UNKNOWN_STATE, "");
+    handleError(ERROR_UNKNOWN_STATE);
   }
 
 }
@@ -105,7 +105,7 @@ bool processButtonsTables() {
     }    
   }
 
-  handleError(ERROR_BUTTONS, ""); // Add buttons here as param 
+  handleError(ERROR_BUTTONS);
 
   return true;
 }
@@ -208,16 +208,21 @@ void handleTable(int8_t table) {
   }
 }
 
-void handleError(byte errorNo, String description) {
+void handleError(int8_t errorNo) {
   state = STATE_STOPPED;
   timer.stop(false);
   panel.error(errorNo);
 
   Serial.print("Error #");
   Serial.print(errorNo);
-  Serial.print(", <");
-  Serial.print(description);
-  Serial.println("$");
+
+  if (errorNo == ERROR_BUTTONS) {
+    for (int i = 0; i < MAX_TABLES; i++) {
+      if (bitRead(state_buttons, 0)) {
+        lamps.onTable(i);
+      }    
+    }
+  }
 }
 
 void handleFinish() {
