@@ -1,28 +1,31 @@
 #define MAX_TABLES 6
-#define START_LAMP_DURATION 1 // seconds
+#define START_LAMP_DURATION  1 // seconds
 
-#define PIN_BUTTON_TABLE_0 53
-#define PIN_BUTTON_TABLE_1 52
-#define PIN_BUTTON_TABLE_2 51
-#define PIN_BUTTON_TABLE_3 50
-#define PIN_BUTTON_TABLE_4 10
-#define PIN_BUTTON_TABLE_5 11
+#define PIN_BUTTON_TABLE_0  53 // PCINT0
+#define PIN_BUTTON_TABLE_1  52 // PCINT1
+#define PIN_BUTTON_TABLE_2  51 // PCINT2
+#define PIN_BUTTON_TABLE_3  50 // PCINT3
+#define PIN_BUTTON_TABLE_4  10 // PCINT4
+#define PIN_BUTTON_TABLE_5  11 // PCINT5
 
 #define PIN_BUTTON_START_60  2 // INT4
 #define PIN_BUTTON_START_20 18 // INT3
 #define PIN_BUTTON_RESET    19 // INT2
-#define PIB_BUTTON_MODE 36 // ??
+#define PIB_BUTTON_MODE     36 // ??
 
 #define PIN_BUZZER 25
 
-#define PIN_LED_TABLE_0 3 // PCINT0
-#define PIN_LED_TABLE_1 4 // PCINT1
-#define PIN_LED_TABLE_2 5 // PCINT2
-#define PIN_LED_TABLE_3 6 // PCINT3
-#define PIN_LED_TABLE_4 7 // PCINT4
-#define PIN_LED_TABLE_5 8 // PCINT5
+#define PIN_LED_TABLE_0 3
+#define PIN_LED_TABLE_1 4
+#define PIN_LED_TABLE_2 5
+#define PIN_LED_TABLE_3 6
+#define PIN_LED_TABLE_4 7
+#define PIN_LED_TABLE_5 8
 
 #define PIN_LED_START 15
+
+#define PIN_LED_START_60 5
+#define PIN_LED_START_20 7
 
 #define PIN_PANEL_CLK 44
 #define PIN_PANEL_DIO 46

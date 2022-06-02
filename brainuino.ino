@@ -12,7 +12,7 @@ Timer timer = Timer();
 Buzzer buzzer = Buzzer(PIN_BUZZER);
 
 int8_t lampPins[] = {PIN_LED_TABLE_0, PIN_LED_TABLE_1, PIN_LED_TABLE_2, PIN_LED_TABLE_3, PIN_LED_TABLE_4, PIN_LED_TABLE_5};
-Lamps lamps = Lamps(PIN_LED_START, lampPins);
+Lamps lamps = Lamps(PIN_LED_START, PIN_LED_START_60, PIN_LED_START_20, lampPins);
 
 int8_t tablePins[] = {PIN_BUTTON_TABLE_0, PIN_BUTTON_TABLE_1, PIN_BUTTON_TABLE_2, PIN_BUTTON_TABLE_3, PIN_BUTTON_TABLE_4, PIN_BUTTON_TABLE_5};
 
@@ -155,6 +155,7 @@ void handleButtonStart60() {
     timer.start(TIMER_START_60);
     buzzer.playStartSound();
     lamps.onStart();
+    lamps.onStart60();
     state = STATE_STARTED;
   }
 }
@@ -165,6 +166,7 @@ void handleButtonStart20() {
     timer.start(TIMER_START_20);
     buzzer.playStartSound();
     lamps.onStart();
+    lamps.onStart20();
     state = STATE_STARTED;
   }
 }
