@@ -18,10 +18,14 @@ int8_t tablePins[] = {PIN_BUTTON_TABLE_0, PIN_BUTTON_TABLE_1, PIN_BUTTON_TABLE_2
 
 Panel panel = Panel(PIN_PANEL_CLK, PIN_PANEL_DIO);
 
-int8_t buttonsPressed[] = {STATE_BUTTONS_TABLE_0_PRESSED, STATE_BUTTONS_TABLE_1_PRESSED, STATE_BUTTONS_TABLE_2_PRESSED, STATE_BUTTONS_TABLE_3_PRESSED, STATE_BUTTONS_TABLE_4_PRESSED, STATE_BUTTONS_TABLE_5_PRESSED}; 
+int8_t tableButtonsPressed[] = {STATE_BUTTONS_TABLE_0_PRESSED, STATE_BUTTONS_TABLE_1_PRESSED, STATE_BUTTONS_TABLE_2_PRESSED, STATE_BUTTONS_TABLE_3_PRESSED, STATE_BUTTONS_TABLE_4_PRESSED, STATE_BUTTONS_TABLE_5_PRESSED}; 
 
-volatile int8_t state_buttons = STATE_BUTTONS_INIT;
-volatile int8_t state_buttons_waiting = true;
+volatile int8_t state_buttons_table = STATE_BUTTONS_TABLE_INIT;
+volatile int8_t state_buttons_table_waiting = true;
+
+volatile int8_t state_buttons_reset_pressed = false;
+volatile int8_t state_buttons_start20_pressed = false;
+volatile int8_t state_buttons_start60_pressed = false;
 
 int8_t state = STATE_INIT;
 
@@ -45,7 +49,7 @@ void setup() {
   enableButtonsTables();
 
   state = STATE_WAITING;
-  state_buttons_waiting = true;
+  state_buttons_table_waiting = true;
 
   Serial.println("Setup Done");
   
@@ -84,15 +88,15 @@ void processButtons() {
 
 bool processButtonsTables() {
   
-  if (state_buttons_waiting) {
+  if (state_buttons_table_waiting) {
     return false;
   }
 
   Serial.print("Processing: ");
-  Serial.println(state_buttons, BIN);
+  Serial.println(state_buttons_table, BIN);
   
   for (int i = 0; i < MAX_TABLES; i++) {
-    if (state_buttons == buttonsPressed[i]) {
+    if (state_buttons_table == tableButtonsPressed[i]) {
       handleTable(i);
       return true;
     }    
@@ -104,10 +108,12 @@ bool processButtonsTables() {
 }
 
 bool processButtonsStart() {
-  if (digitalRead(PIN_BUTTON_START_60) == BUTTON_PRESSED) {
+  if (state_buttons_start60_pressed) {
+    resetFlagsButtonsControl();
     handleButtonStart60();
     return true;
-  } else if (digitalRead(PIN_BUTTON_START_20) == BUTTON_PRESSED) {
+  } else if (state_buttons_start20_pressed) {
+    resetFlagsButtonsControl();
     handleButtonStart20();
     return true;
   } 
@@ -115,7 +121,8 @@ bool processButtonsStart() {
 }
 
 bool processButtonReset() {
-  if (digitalRead(PIN_BUTTON_RESET) == BUTTON_PRESSED) {
+  if (state_buttons_reset_pressed) {
+    resetFlagsButtonsControl();
     handleButtonReset();
     return true;
   }
@@ -165,7 +172,7 @@ void handleButtonStart20() {
 void handleButtonReset() {
   Serial.println("\nReset");
   state = STATE_WAITING;
-  state_buttons_waiting = true;
+  state_buttons_table_waiting = true;
   timer.stop();
   timer.reset();
   lamps.allOff();
@@ -211,7 +218,7 @@ void handleError(int8_t errorNo) {
 
   if (errorNo == ERROR_BUTTONS) {
     for (int i = 0; i < MAX_TABLES; i++) {
-      if (bitRead(state_buttons, 0)) {
+      if (bitRead(state_buttons_table, 0)) {
         lamps.onTable(i);
       }    
     }
@@ -225,7 +232,19 @@ void handleFinish() {
 }
 
 void setupButtons() {
+  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_RESET), isrButtonReset, FALLING);
+  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_START_20), isrButtonStart20, FALLING);
+  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_START_60), isrButtonStart60, FALLING);
+
   PCMSK0 = B00111111; // enable PCINT0..7
+
+  resetFlagsButtonsControl();
+}
+
+void resetFlagsButtonsControl() {
+  state_buttons_reset_pressed = false;
+  state_buttons_start20_pressed = false;
+  state_buttons_start60_pressed = false;  
 }
 
 void enableButtonsTables() {
@@ -240,15 +259,30 @@ ISR(PCINT0_vect) {
   uint8_t buttons;
   buttons = PINB;
 
-  if (buttons == STATE_BUTTONS_INIT) {
+  if (buttons == STATE_BUTTONS_TABLE_INIT) {
     Serial.print(". ");      
-  } else if (state_buttons_waiting) {
+  } else if (state_buttons_table_waiting) {
     disableButtonsTables();
-    state_buttons_waiting = false;
-    state_buttons = buttons;
+    state_buttons_table_waiting = false;
+    state_buttons_table = buttons;
     Serial.print("+ ");  
   } else {
     Serial.print("- ");  
   }
   Serial.println(buttons, BIN);
+}
+
+void isrButtonReset() {
+  state_buttons_reset_pressed = true;
+  Serial.println("+ Reset");  
+}
+
+void isrButtonStart20() {
+  state_buttons_start20_pressed = true;
+  Serial.println("+ Start20");  
+}
+
+void isrButtonStart60() {
+  state_buttons_start60_pressed = true;
+  Serial.println("+ Start60");  
 }
