@@ -41,8 +41,8 @@ void setup() {
   lamps.setup();
   panel.setup();
 
-  PCMSK0 = B00111111; // enable PCINT0..7
-  enableTableButtons();
+  setupButtons();
+  enableButtonsTables();
 
   state = STATE_WAITING;
   state_buttons_waiting = true;
@@ -172,13 +172,13 @@ void handleButtonReset() {
   buzzer.off();
   // TODO: Should we display 0:00 ?
   panel.off();
-  enableTableButtons();
+  enableButtonsTables();
 }
 
 void handleTable(int8_t table) {
   Serial.print(table);
   Serial.print(" >> ");
- if (state == STATE_STARTED) {
+  if (state == STATE_STARTED) {
     Serial.println("Table Pressed");
     buzzer.off();
     buzzer.playTableSound();
@@ -224,11 +224,15 @@ void handleFinish() {
   buzzer.playFinishSound();
 }
 
-void enableTableButtons() {
+void setupButtons() {
+  PCMSK0 = B00111111; // enable PCINT0..7
+}
+
+void enableButtonsTables() {
   PCICR |= B00000001;  // enable PCIE0 group
 }
 
-void disableTableButtons() {
+void disableButtonsTables() {
   PCICR &= ~B00000001;  // disable PCIE0 group
 }
 
@@ -239,7 +243,7 @@ ISR(PCINT0_vect) {
   if (buttons == STATE_BUTTONS_INIT) {
     Serial.print(". ");      
   } else if (state_buttons_waiting) {
-    disableTableButtons();
+    disableButtonsTables();
     state_buttons_waiting = false;
     state_buttons = buttons;
     Serial.print("+ ");  
