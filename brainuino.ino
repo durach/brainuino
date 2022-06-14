@@ -92,8 +92,9 @@ bool processButtonsTables() {
     return false;
   }
 
-  Serial.print("Processing: ");
-  Serial.println(state_buttons_table, BIN);
+  Serial.print("Processing: <<");
+  Serial.print(state_buttons_table, BIN);
+  Serial.println(">>");
   
   for (int i = 0; i < MAX_TABLES; i++) {
     if (state_buttons_table == tableButtonsPressed[i]) {
@@ -238,7 +239,7 @@ void setupButtons() {
   attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_START_20), isrButtonStart20, FALLING);
   attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_START_60), isrButtonStart60, FALLING);
 
-  PCMSK0 = B00111111; // enable PCINT0..7
+  PCMSK2 = B00111111; // enable PCINT16..21
 
   resetFlagsButtonsControl();
 }
@@ -250,16 +251,17 @@ void resetFlagsButtonsControl() {
 }
 
 void enableButtonsTables() {
-  PCICR |= B00000001;  // enable PCIE0 group
+  PCICR |= B00000100;  // enable PCIE2 group
 }
 
 void disableButtonsTables() {
-  PCICR &= ~B00000001;  // disable PCIE0 group
+  PCICR &= ~B00000100;  // disable PCIE2 group
 }
 
-ISR(PCINT0_vect) {
+ISR(PCINT2_vect) {
   uint8_t buttons;
-  buttons = PINB;
+  buttons = PINK;
+  buttons &= B00111111; // sometimes not-used bits are HIGH
 
   if (buttons == STATE_BUTTONS_TABLE_INIT) {
     Serial.print(". ");      
