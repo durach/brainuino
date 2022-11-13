@@ -76,7 +76,7 @@ void processButtons() {
   if (state == STATE_STARTED) {
     processButtonsTables() || processButtonReset();
   } else if (state == STATE_WAITING) {
-    processButtonsTables() || processButtonsStart(); // Probably we need to add reset here to switch to SI more
+    processButtonsTables() || processButtonsStart() || processButtonReset();
   } else if (state == STATE_STOPPED) {
     processButtonReset();
   } else if (state == STATE_INIT) {
