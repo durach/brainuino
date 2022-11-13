@@ -184,6 +184,7 @@ void handleButtonReset() {
   // TODO: Should we display 0:00 ?
   panel.off();
   enableButtonsTables();
+  Serial.println("...Waiting...");
 }
 
 void handleTable(int8_t table) {
