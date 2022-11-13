@@ -32,7 +32,7 @@ int8_t state = STATE_INIT;
 void setup() {
 
   Serial.begin(9600);
-  Serial.println("Setup Begin");
+  Serial.println("! Setup Begin");
   
   pinMode(PIN_BUTTON_START_60, INPUT_PULLUP);
   pinMode(PIN_BUTTON_START_20, INPUT_PULLUP);
@@ -51,7 +51,7 @@ void setup() {
   state = STATE_WAITING;
   state_buttons_table_waiting = true;
 
-  Serial.println("Setup Done");
+  Serial.println("! Setup Done");
   
 }
 
@@ -61,6 +61,7 @@ void loop() {
   processTimer();
 
   if ((state == STATE_STARTED) && timer.isUpdated) {
+    Serial.print("T=");
     Serial.println(timer.value);
   }
 
@@ -151,7 +152,7 @@ void processTimer() {
 }
 
 void handleButtonStart60() {
-  Serial.println("\nStart 60");
+  Serial.println("\n! Start 60");
   if (state == STATE_WAITING) {
     timer.start(TIMER_START_60);
     buzzer.playStartSound();
@@ -162,7 +163,7 @@ void handleButtonStart60() {
 }
 
 void handleButtonStart20() {
-  Serial.println("\nStart 20");
+  Serial.println("\n! Start 20");
   if (state == STATE_WAITING) {
     timer.start(TIMER_START_20);
     buzzer.playStartSound();
@@ -173,7 +174,7 @@ void handleButtonStart20() {
 }
 
 void handleButtonReset() {
-  Serial.println("\nReset");
+  Serial.println("\n! Reset");
   state = STATE_WAITING;
   state_buttons_table_waiting = true;
   timer.stop();
@@ -186,6 +187,7 @@ void handleButtonReset() {
 }
 
 void handleTable(int8_t table) {
+  Serial.print("Table ");
   Serial.print(table);
   Serial.print(" >> ");
   if (state == STATE_STARTED) {
@@ -229,7 +231,7 @@ void handleError(int8_t errorNo) {
 }
 
 void handleFinish() {
-  Serial.println("Finish");
+  Serial.println("! Finish");
   state = STATE_STOPPED;
   buzzer.playFinishSound();
 }
@@ -278,15 +280,15 @@ ISR(PCINT2_vect) {
 
 void isrButtonReset() {
   state_buttons_reset_pressed = true;
-  Serial.println("+ Reset");  
+  Serial.println("B=Reset");  
 }
 
 void isrButtonStart20() {
   state_buttons_start20_pressed = true;
-  Serial.println("+ Start20");  
+  Serial.println("B=Start20");  
 }
 
 void isrButtonStart60() {
   state_buttons_start60_pressed = true;
-  Serial.println("+ Start60");  
+  Serial.println("B=Start60");  
 }
