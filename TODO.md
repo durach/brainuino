@@ -1,6 +1,7 @@
 == HARDWARE ==
 [.] Silent high pitch sound while display is showing numbers
 [.] Volume indicator it not linear or even logarifmic
+[.] Test if all buttons work properly
 
 == SOFTWARE ==
 ...
