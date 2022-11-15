@@ -11,25 +11,25 @@
 Timer timer = Timer();
 Buzzer buzzer = Buzzer(PIN_BUZZER);
 
-int8_t lampPins[] = {PIN_LED_TABLE_0, PIN_LED_TABLE_1, PIN_LED_TABLE_2, PIN_LED_TABLE_3, PIN_LED_TABLE_4, PIN_LED_TABLE_5};
+uint8_t lampPins[] = {PIN_LED_TABLE_0, PIN_LED_TABLE_1, PIN_LED_TABLE_2, PIN_LED_TABLE_3, PIN_LED_TABLE_4, PIN_LED_TABLE_5};
 Lamps lamps = Lamps(PIN_LED_START, PIN_LED_START_60, PIN_LED_START_20, lampPins);
 
-int8_t tablePins[] = {PIN_BUTTON_TABLE_0, PIN_BUTTON_TABLE_1, PIN_BUTTON_TABLE_2, PIN_BUTTON_TABLE_3, PIN_BUTTON_TABLE_4, PIN_BUTTON_TABLE_5};
+uint8_t tablePins[] = {PIN_BUTTON_TABLE_0, PIN_BUTTON_TABLE_1, PIN_BUTTON_TABLE_2, PIN_BUTTON_TABLE_3, PIN_BUTTON_TABLE_4, PIN_BUTTON_TABLE_5};
 
 Panel panel = Panel(PIN_PANEL_CLK, PIN_PANEL_DIO);
 
-int8_t tableButtonsPressed[] = {STATE_BUTTONS_TABLE_0_PRESSED, STATE_BUTTONS_TABLE_1_PRESSED, STATE_BUTTONS_TABLE_2_PRESSED, STATE_BUTTONS_TABLE_3_PRESSED, STATE_BUTTONS_TABLE_4_PRESSED, STATE_BUTTONS_TABLE_5_PRESSED}; 
+uint8_t tableButtonsPressed[] = {STATE_BUTTONS_TABLE_0_PRESSED, STATE_BUTTONS_TABLE_1_PRESSED, STATE_BUTTONS_TABLE_2_PRESSED, STATE_BUTTONS_TABLE_3_PRESSED, STATE_BUTTONS_TABLE_4_PRESSED, STATE_BUTTONS_TABLE_5_PRESSED}; 
 
-volatile int8_t state_buttons_table = STATE_BUTTONS_TABLE_INIT;
-volatile int8_t state_buttons_table_waiting = true;
+volatile uint8_t state_buttons_table = STATE_BUTTONS_TABLE_INIT;
+volatile uint8_t state_buttons_table_waiting = true;
 
-volatile int8_t state_buttons_reset_pressed = false;
-volatile int8_t state_buttons_start20_pressed = false;
-volatile int8_t state_buttons_start60_pressed = false;
+volatile uint8_t state_buttons_reset_pressed = false;
+volatile uint8_t state_buttons_start20_pressed = false;
+volatile uint8_t state_buttons_start60_pressed = false;
 
-int8_t state = STATE_INIT;
+uint8_t state = STATE_INIT;
 
-int8_t mode = MODE_BR;
+uint8_t mode = MODE_BR;
 
 void setup() {
 

@@ -1,6 +1,6 @@
 #include "Buzzer.h"
 
-Buzzer::Buzzer(int8_t pin) {
+Buzzer::Buzzer(uint8_t pin) {
   _pin = pin;
 }
 
