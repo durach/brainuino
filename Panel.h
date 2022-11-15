@@ -15,7 +15,7 @@ class Panel {
   public:
     Panel(uint8_t pinCLK, uint8_t pinDIO);
     void setup(uint8_t mode);
-    void displayTime(uint32_t time);
+    void displayTime(uint32_t time, bool display_cs = false);
     void displayFalseStart();
     void off();
     void error(uint8_t error);
