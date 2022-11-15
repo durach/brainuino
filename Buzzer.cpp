@@ -16,6 +16,10 @@ void Buzzer::playFalseStartSound() {
   tone(_pin, BUZZER_FREQUENCY_FALSE_START, BUZZER_SOUND_DURATION);
 }
 
+void Buzzer::playFinishingSound() {
+  tone(_pin, BUZZER_FREQUENCY_FINISHING, BUZZER_SOUND_DURATION);
+}
+
 void Buzzer::playFinishSound() {
   tone(_pin, BUZZER_FREQUENCY_FINISH, BUZZER_SOUND_DURATION);
 }

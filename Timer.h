@@ -2,6 +2,8 @@
 #define TIMER_START_20 20000 // ms
 
 #define TIMER_PRECISION 1000 // ms
+#define TIMER_PRECISION_FINISHING 95 // ms
+#define IS_FINISHING 10000 // ms
 
 class Timer {
   private:
@@ -21,4 +23,5 @@ class Timer {
     void stop(bool updated = true);
     void tick();
     void reset();
+    bool is_finishing();
 };
