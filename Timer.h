@@ -1,27 +1,23 @@
-#define TIMER_START_60 60.0
-#define TIMER_START_20 20.0
+#define TIMER_START_60 60000 // ms
+#define TIMER_START_20 20000 // ms
 
-#define TIMER_MILLISECONDS_IN_SECOND 1000.0
-#define TIMER_PRECISION 1.0
-
-// TODO: do we need double here?
-// TODO: try do not use floats here at all
+#define TIMER_PRECISION 1000 // ms
 
 class Timer {
   private:
-    unsigned long _startTime;
-    double _oldValue;
-    double _target;
+    uint32_t _startTime;
+    uint32_t _oldValue;
+    uint32_t _target;
 
   public:
     Timer();
 
-    double value;
+    uint32_t value;
     bool isRunning = false;
     bool isUpdated = false;
     bool isFinished = false;
     
-    void start(double target);
+    void start(uint32_t target);
     void stop(bool updated = true);
     void tick();
     void reset();

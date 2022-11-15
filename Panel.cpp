@@ -23,12 +23,12 @@ const uint8_t SEG_BR[] = {
 };
 
 
-Panel::Panel(int8_t pinCLK, int8_t pinDIO)  : _tm(pinCLK, pinDIO, 100) {
+Panel::Panel(uint8_t pinCLK, uint8_t pinDIO)  : _tm(pinCLK, pinDIO, 100) {
   _pinCLK = pinCLK;
   _pinDIO = pinDIO;
 }
 
-void Panel::setup(int8_t mode) {
+void Panel::setup(uint8_t mode) {
   _tm.setBrightness(PANEL_BRIGHTNESS);
   _tm.clear();
   if (mode == MODE_BR) {
@@ -40,11 +40,11 @@ void Panel::setup(int8_t mode) {
     delay(PANEL_SPLASH_DURATION);
     _tm.clear();
   }
-  
 }
 
-void Panel::displayTime(float time) {
-  _tm.showNumberDecEx(time * 100, 0b01000000, true);
+void Panel::displayTime(uint32_t time) {
+  uint32_t time_cs = time / 10; // milliseconds to centiseconds
+  _tm.showNumberDecEx(time_cs, 0b01000000, true);
 }
 
 void Panel::displayFalseStart() {
@@ -56,7 +56,7 @@ void Panel::off() {
   _tm.clear();
 }
 
-void Panel::error(int8_t number) {
+void Panel::error(uint8_t number) {
   _tm.clear();
   _tm.setSegments(SEG_ERR);
   _tm.showNumberDec(number, false, 1, 3);

@@ -1,5 +1,5 @@
 #define MAX_TABLES 6
-#define START_LAMP_DURATION  1 // seconds
+#define START_LAMP_DURATION  1000 // ms
 
 #define PIN_BUTTON_TABLE_0  62 // PCINT16 / A8
 #define PIN_BUTTON_TABLE_1  63 // PCINT17 / A9
@@ -44,8 +44,6 @@
 #define TABLE_3 3
 #define TABLE_4 4
 #define TABLE_5 5
-
-//#define START_SCREEN_TIME 1.00
 
 #define ERROR_NOT_INITED 0
 #define ERROR_UNKNOWN_STATE 1
