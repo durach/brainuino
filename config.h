@@ -34,8 +34,10 @@
 
 #define STATE_INIT 0
 #define STATE_WAITING 1
-#define STATE_STARTED 2
-#define STATE_STOPPED 3
+#define STATE_DELAYED_START_60 2
+#define STATE_DELAYED_START_20 3
+#define STATE_STARTED 4
+#define STATE_STOPPED 5
 
 #define TABLE_0 0
 #define TABLE_1 1
