@@ -28,8 +28,8 @@ volatile uint8_t state_buttons_start20_pressed = false;
 volatile uint8_t state_buttons_start60_pressed = false;
 
 uint8_t state = STATE_INIT;
-
 uint8_t mode = MODE_BR;
+bool finishing_sound_played = false;
 
 void setup() {
 
@@ -55,7 +55,8 @@ void setup() {
 
   state = STATE_WAITING;
   state_buttons_table_waiting = true;
-  timer.isUpdated = true;
+  
+  timer.reset();
 
   randomInit();
 
@@ -67,12 +68,6 @@ void loop() {
   processButtons();
   timer.tick();
   processTimer();
-
-  if ((state == STATE_STARTED) && timer.isUpdated) {
-    Serial.print("T=");
-    Serial.println(timer.value);
-  }
-
   processPanel();  
   processStartLampOff();
 }
@@ -145,11 +140,11 @@ bool processButtonReset() {
 void processPanel() {
   if (mode == MODE_BR) {
     if (timer.isUpdated) {
-      panel.displayTime(timer.value, !state_buttons_table_waiting);
+      bool display_cs = !state_buttons_table_waiting || timer.is_finishing() || timer.isFinished;
+      panel.displayTime(timer.value, display_cs);
+      timer.isUpdated = false;
     }
   }
-        
-  timer.isUpdated = false;
 }
 
 void processStartLampOff() {
@@ -159,8 +154,14 @@ void processStartLampOff() {
 }
 
 void processTimer() {
-  if ((state == STATE_STARTED) && timer.isFinished) {
-    handleFinish();
+  if (state == STATE_STARTED) {
+    if (timer.is_finishing() && !finishing_sound_played) {
+      buzzer.playFinishingSound();
+      finishing_sound_played = true;
+    }
+    if (timer.isFinished) {
+      handleFinish();
+    }
   }
 }
 
@@ -172,6 +173,7 @@ void handleButtonStart60() {
     buzzer.playStartSound();
     lamps.onStart();
     lamps.onStart60();
+    finishing_sound_played = false;
     state = STATE_STARTED;
   }
 }
@@ -184,6 +186,7 @@ void handleButtonStart20() {
     buzzer.playStartSound();
     lamps.onStart();
     lamps.onStart20();
+    finishing_sound_played = false;
     state = STATE_STARTED;
   }
 }

@@ -22,7 +22,6 @@ const uint8_t SEG_BR[] = {
   0,
 };
 
-
 Panel::Panel(uint8_t pinCLK, uint8_t pinDIO)  : _tm(pinCLK, pinDIO, 100) {
   _pinCLK = pinCLK;
   _pinDIO = pinDIO;
@@ -42,11 +41,16 @@ void Panel::setup(uint8_t mode) {
 }
 
 void Panel::displayTime(uint32_t time, bool display_cs) {
+  Serial.print("T=");
+  Serial.print(time);
+  Serial.print(", ");
   if (display_cs) {
     uint32_t time_cs = time / 10; // milliseconds to centiseconds
+    Serial.println(time_cs);
     _tm.showNumberDecEx(time_cs, 0b01000000, true);
   } else {
     uint32_t time_cs = time / 1000; // milliseconds to centiseconds
+    Serial.println(time_cs);
     _tm.showNumberDecEx(time_cs, 0, true, 2, 1);
   }
 }

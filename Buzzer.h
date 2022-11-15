@@ -3,6 +3,7 @@
 #define BUZZER_FREQUENCY_START 800 // Hz
 #define BUZZER_FREQUENCY_TABLE 700 // Hz
 #define BUZZER_FREQUENCY_FALSE_START 600 // Hz
+#define BUZZER_FREQUENCY_FINISHING 600 // Hz
 #define BUZZER_FREQUENCY_FINISH 550 // Hz
 
 #define BUZZER_SOUND_DURATION 1000 // ms
@@ -18,6 +19,7 @@ class Buzzer {
     void playStartSound();
     void playTableSound();
     void playFalseStartSound();
+    void playFinishingSound();
     void playFinishSound();
     void off();
 };
