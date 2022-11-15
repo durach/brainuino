@@ -55,6 +55,7 @@ void setup() {
 
   state = STATE_WAITING;
   state_buttons_table_waiting = true;
+  timer.isUpdated = true;
 
   Serial.println("! Setup Done");
   
@@ -106,7 +107,7 @@ bool processButtonsTables() {
     if (state_buttons_table == tableButtonsPressed[i]) {
       handleTable(i);
       return true;
-    }    
+    }
   }
 
   handleError(ERROR_BUTTONS);
@@ -142,7 +143,7 @@ bool processButtonReset() {
 void processPanel() {
   if (mode == MODE_BR) {
     if (timer.isUpdated) {
-      panel.displayTime(timer.value);
+      panel.displayTime(timer.value, state == STATE_STOPPED);
     }
   }
         
@@ -191,7 +192,6 @@ void handleButtonReset() {
   timer.reset();
   lamps.allOff();
   buzzer.off();
-  // TODO: Should we display 0:00 ?
   panel.off();
   enableButtonsTables();
   Serial.println("...Waiting...");

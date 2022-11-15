@@ -34,7 +34,6 @@ void Panel::setup(uint8_t mode) {
   if (mode == MODE_BR) {
     _tm.setSegments(SEG_BR);
     delay(PANEL_SPLASH_DURATION);
-    _tm.showNumberDecEx(0, 0b01000000, true); // 00:00
   } else {
     _tm.setSegments(SEG_SG);
     delay(PANEL_SPLASH_DURATION);
@@ -42,9 +41,14 @@ void Panel::setup(uint8_t mode) {
   }
 }
 
-void Panel::displayTime(uint32_t time) {
-  uint32_t time_cs = time / 10; // milliseconds to centiseconds
-  _tm.showNumberDecEx(time_cs, 0b01000000, true);
+void Panel::displayTime(uint32_t time, bool display_cs) {
+  if (display_cs) {
+    uint32_t time_cs = time / 10; // milliseconds to centiseconds
+    _tm.showNumberDecEx(time_cs, 0b01000000, true);
+  } else {
+    uint32_t time_cs = time / 1000; // milliseconds to centiseconds
+    _tm.showNumberDecEx(time_cs, 0, true, 2, 1);
+  }
 }
 
 void Panel::displayFalseStart() {
