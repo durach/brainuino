@@ -3,6 +3,7 @@
 #include "TM1637Display.h"
 
 #define PANEL_BRIGHTNESS 4
+#define PANEL_SPLASH_DURATION 2000
 
 class Panel {
 
@@ -13,7 +14,7 @@ class Panel {
     
   public:
     Panel(int8_t pinCLK, int8_t pinDIO);
-    void setup();
+    void setup(int8_t mode);
     void displayTime(float time);
     void displayFalseStart();
     void off();
