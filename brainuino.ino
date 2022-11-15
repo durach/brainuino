@@ -57,6 +57,8 @@ void setup() {
   state_buttons_table_waiting = true;
   timer.isUpdated = true;
 
+  randomInit();
+
   Serial.println("! Setup Done");
   
 }
@@ -165,6 +167,7 @@ void processTimer() {
 void handleButtonStart60() {
   Serial.println("\n! Start 60");
   if (state == STATE_WAITING) {
+    randomDelay();
     timer.start(TIMER_START_60);
     buzzer.playStartSound();
     lamps.onStart();
@@ -176,6 +179,7 @@ void handleButtonStart60() {
 void handleButtonStart20() {
   Serial.println("\n! Start 20");
   if (state == STATE_WAITING) {
+    randomDelay();
     timer.start(TIMER_START_20);
     buzzer.playStartSound();
     lamps.onStart();
@@ -308,4 +312,15 @@ void isrButtonStart20() {
 void isrButtonStart60() {
   state_buttons_start60_pressed = true;
   Serial.println("B=Start60");  
+}
+
+void randomInit() {
+  randomSeed(analogRead(PIN_RANDOM_SEED));
+}
+
+void randomDelay() {
+  uint32_t random_delay = random(MAX_RANDOM_DELAY);
+  Serial.print("Delay: ");
+  Serial.println(random_delay);
+  delay(random_delay);
 }

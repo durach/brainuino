@@ -61,3 +61,6 @@
 
 #define MODE_BR 0
 #define MODE_SG 1
+
+#define PIN_RANDOM_SEED 56 // A2
+#define MAX_RANDOM_DELAY 1500
