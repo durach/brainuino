@@ -143,7 +143,7 @@ bool processButtonReset() {
 void processPanel() {
   if (mode == MODE_BR) {
     if (timer.isUpdated) {
-      panel.displayTime(timer.value, state == STATE_STOPPED);
+      panel.displayTime(timer.value, !state_buttons_table_waiting);
     }
   }
         
