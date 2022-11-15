@@ -31,6 +31,8 @@ uint8_t state = STATE_INIT;
 uint8_t mode = MODE_BR;
 bool finishing_sound_played = false;
 
+uint32_t random_end;
+
 void setup() {
 
   Serial.begin(9600);
@@ -73,13 +75,14 @@ void loop() {
 }
 
 void processButtons() {
-
-  // TODO: Add SI Mode
-
   if (state == STATE_STARTED) {
     processButtonsTables() || processButtonReset();
   } else if (state == STATE_WAITING) {
     processButtonsTables() || processButtonsStart() || processButtonReset();
+  } else if (state == STATE_DELAYED_START_60) {
+    processButtonsTables() || processDelayedStart60() || processButtonReset();
+  } else if (state == STATE_DELAYED_START_20) {
+    processButtonsTables() || processDelayedStart20() || processButtonReset();
   } else if (state == STATE_STOPPED) {
     processButtonReset();
   } else if (state == STATE_INIT) {
@@ -129,6 +132,22 @@ bool processButtonsStart() {
   return false;
 }
 
+bool processDelayedStart60() {
+  if (isRandomFinished()) {
+    handleDelayedStart60();
+    return true;
+  }
+  return false;
+}
+
+bool processDelayedStart20() {
+  if (isRandomFinished()) {
+    handleDelayedStart20();
+    return true;
+  }
+  return false;
+}
+
 bool processButtonReset() {
   if (state_buttons_reset_pressed) {
     resetFlagsButtonsControl();
@@ -168,27 +187,37 @@ void processTimer() {
 void handleButtonStart60() {
   Serial.println("\n! Start 60");
   if (state == STATE_WAITING) {
-    randomDelay();
-    timer.start(TIMER_START_60);
-    buzzer.playStartSound();
-    lamps.onStart();
-    lamps.onStart60();
-    finishing_sound_played = false;
-    state = STATE_STARTED;
+    randomStart();
+    state = STATE_DELAYED_START_60;
   }
 }
 
 void handleButtonStart20() {
   Serial.println("\n! Start 20");
   if (state == STATE_WAITING) {
-    randomDelay();
-    timer.start(TIMER_START_20);
-    buzzer.playStartSound();
-    lamps.onStart();
-    lamps.onStart20();
-    finishing_sound_played = false;
-    state = STATE_STARTED;
+    randomStart();
+    state = STATE_DELAYED_START_20;
   }
+}
+
+void handleDelayedStart60() {
+  Serial.println("\n! Delayed Start 60");
+  timer.start(TIMER_START_60);
+  buzzer.playStartSound();
+  lamps.onStart();
+  lamps.onStart60();
+  finishing_sound_played = false;
+  state = STATE_STARTED;
+}
+
+void handleDelayedStart20() {
+  Serial.println("\n! Delayed Start 20");
+  timer.start(TIMER_START_20);
+  buzzer.playStartSound();
+  lamps.onStart();
+  lamps.onStart20();
+  finishing_sound_played = false;
+  state = STATE_STARTED;
 }
 
 void handleButtonReset() {
@@ -216,7 +245,7 @@ void handleTable(int8_t table) {
     lamps.onTable(table);
     state = STATE_STOPPED;
     timer.stop();
-  } else if (state == STATE_WAITING) {
+  } else if (state == STATE_WAITING || state == STATE_DELAYED_START_60 || state == STATE_DELAYED_START_20) {
     if (mode == MODE_BR) {
       Serial.println("BR: False Start");
       buzzer.off();
@@ -321,9 +350,15 @@ void randomInit() {
   randomSeed(analogRead(PIN_RANDOM_SEED));
 }
 
-void randomDelay() {
+void randomStart() {
   uint32_t random_delay = random(MAX_RANDOM_DELAY);
+  uint32_t random_start = millis();
   Serial.print("Delay: ");
   Serial.println(random_delay);
-  delay(random_delay);
+  
+  random_end = random_start + random_delay;
+}
+
+bool isRandomFinished() {
+  return millis() >= random_end;
 }
