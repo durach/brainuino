@@ -29,6 +29,8 @@ volatile int8_t state_buttons_start60_pressed = false;
 
 int8_t state = STATE_INIT;
 
+int8_t mode = MODE_BR;
+
 void setup() {
 
   Serial.begin(9600);
@@ -37,13 +39,16 @@ void setup() {
   pinMode(PIN_BUTTON_START_60, INPUT_PULLUP);
   pinMode(PIN_BUTTON_START_20, INPUT_PULLUP);
   pinMode(PIN_BUTTON_RESET, INPUT_PULLUP);
+  pinMode(PIN_BUTTON_MODE, INPUT_PULLUP);
 
   for (int8_t i = 0; i < MAX_TABLES; i++) {
     pinMode(tablePins[i], INPUT_PULLUP);
   }
 
+  mode = digitalRead(PIN_BUTTON_MODE);
+
   lamps.setup();
-  panel.setup();
+  panel.setup(mode);
 
   setupButtons();
   enableButtonsTables();
@@ -110,6 +115,10 @@ bool processButtonsTables() {
 }
 
 bool processButtonsStart() {
+  if (mode == MODE_SG) {
+    return false;
+  }
+
   if (state_buttons_start60_pressed) {
     resetFlagsButtonsControl();
     handleButtonStart60();
@@ -131,9 +140,10 @@ bool processButtonReset() {
 }
 
 void processPanel() {
-  
-  if (timer.isUpdated) {
-     panel.displayTime(timer.value);
+  if (mode == MODE_BR) {
+    if (timer.isUpdated) {
+      panel.displayTime(timer.value);
+    }
   }
         
   timer.isUpdated = false;
@@ -192,17 +202,23 @@ void handleTable(int8_t table) {
   Serial.print(table);
   Serial.print(" >> ");
   if (state == STATE_STARTED) {
-    Serial.println("Table Pressed");
+    Serial.println("BR: Table Pressed");
     buzzer.off();
     buzzer.playTableSound();
+    lamps.offStart();
     lamps.onTable(table);
     state = STATE_STOPPED;
     timer.stop();
   } else if (state == STATE_WAITING) {
-    Serial.println("False Start");
-    buzzer.off();
-    buzzer.playFalseStartSound();
-    panel.displayFalseStart();
+    if (mode == MODE_BR) {
+      Serial.println("BR: False Start");
+      buzzer.off();
+      buzzer.playFalseStartSound();
+      panel.displayFalseStart();
+    } else {
+      Serial.println("SG: Table Pressed");
+      buzzer.playTableSound();
+    }
     lamps.onTable(table);
     state = STATE_STOPPED;
   } else if (state == STATE_INIT) {
