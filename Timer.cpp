@@ -5,7 +5,7 @@ Timer::Timer() {
 
 }
 
-void Timer::start(double target) {
+void Timer::start(uint32_t target) {
   _target = target;
   _startTime = millis();
   isRunning = true;
@@ -23,7 +23,7 @@ void Timer::tick() {
     return;
   }
   
-  value = (millis() - _startTime) / TIMER_MILLISECONDS_IN_SECOND;
+  value = millis() - _startTime;
 
   if (value >= _target) {
     value = _target;
@@ -32,7 +32,7 @@ void Timer::tick() {
     isUpdated = true;
   }
   
-  if ((value - _oldValue) > TIMER_PRECISION) {
+  if ((value - _oldValue) >= TIMER_PRECISION) {
     _oldValue = value;
     isUpdated = true;
   }
