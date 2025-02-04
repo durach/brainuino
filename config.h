@@ -13,7 +13,7 @@
 #define PIN_BUTTON_RESET    19 // INT2
 #define PIN_BUTTON_MODE     3 
 
-#define PIN_BUZZER 25
+#define PIN_BUZZER 45
 
 #define PIN_LED_TABLE_1 54 // A0
 #define PIN_LED_TABLE_2 56 // A2
@@ -22,13 +22,13 @@
 #define PIN_LED_TABLE_5 42 // D42
 #define PIN_LED_TABLE_6 44 // D44
 
-#define PIN_LED_START 15
+#define PIN_LED_START 43
 
-#define PIN_LED_START_60 5
-#define PIN_LED_START_20 7
+#define PIN_LED_START_60 11
+#define PIN_LED_START_20 21
 
-#define PIN_PANEL_CLK 44
-#define PIN_PANEL_DIO 46
+#define PIN_PANEL_CLK 26
+#define PIN_PANEL_DIO 28
 
 #define BUTTON_PRESSED 0
 
@@ -63,5 +63,5 @@
 #define MODE_BR 0
 #define MODE_SG 1
 
-#define PIN_RANDOM_SEED 56 // A2
+#define PIN_RANDOM_SEED 55 // A1
 #define MAX_RANDOM_DELAY 1500
