@@ -8,6 +8,8 @@
 #include "Lamps.h"
 #include "Panel.h"
 
+#define DEBOUNCE_DELAY 50  // debounce delay in milliseconds
+
 Timer timer = Timer();
 Buzzer buzzer = Buzzer(PIN_BUZZER);
 
@@ -23,9 +25,8 @@ uint8_t tableButtonsPressed[] = {STATE_BUTTONS_TABLE_1_PRESSED, STATE_BUTTONS_TA
 volatile uint8_t state_buttons_table = STATE_BUTTONS_TABLE_INIT;
 volatile uint8_t state_buttons_table_waiting = true;
 
-volatile uint8_t state_buttons_reset_pressed = false;
-volatile uint8_t state_buttons_start20_pressed = false;
-volatile uint8_t state_buttons_start60_pressed = false;
+// Removed volatile flags for Start60, Start20, and Reset buttons
+// They are no longer needed since we poll these buttons in the main loop.
 
 uint8_t state = STATE_INIT;
 uint8_t mode = MODE_BR;
@@ -90,7 +91,6 @@ void processButtons() {
   } else {
     handleError(ERROR_UNKNOWN_STATE);
   }
-
 }
 
 bool processButtonsTables() {
@@ -119,16 +119,35 @@ bool processButtonsStart() {
   if (mode == MODE_SG) {
     return false;
   }
-
-  if (state_buttons_start60_pressed) {
-    resetFlagsButtonsControl();
-    handleButtonStart60();
-    return true;
-  } else if (state_buttons_start20_pressed) {
-    resetFlagsButtonsControl();
-    handleButtonStart20();
-    return true;
-  } 
+  
+  static uint8_t lastStart60State = HIGH;
+  static uint8_t lastStart20State = HIGH;
+  
+  uint8_t currentStart60State = digitalRead(PIN_BUTTON_START_60);
+  uint8_t currentStart20State = digitalRead(PIN_BUTTON_START_20);
+  
+  // Detect falling edge for Start 60 button
+  if (lastStart60State == HIGH && currentStart60State == LOW) {
+    delay(DEBOUNCE_DELAY);
+    if (digitalRead(PIN_BUTTON_START_60) == LOW) {
+      handleButtonStart60();
+      lastStart60State = LOW;
+      return true;
+    }
+  }
+  lastStart60State = currentStart60State;
+  
+  // Detect falling edge for Start 20 button
+  if (lastStart20State == HIGH && currentStart20State == LOW) {
+    delay(DEBOUNCE_DELAY);
+    if (digitalRead(PIN_BUTTON_START_20) == LOW) {
+      handleButtonStart20();
+      lastStart20State = LOW;
+      return true;
+    }
+  }
+  lastStart20State = currentStart20State;
+  
   return false;
 }
 
@@ -149,11 +168,21 @@ bool processDelayedStart20() {
 }
 
 bool processButtonReset() {
-  if (state_buttons_reset_pressed) {
-    resetFlagsButtonsControl();
-    handleButtonReset();
-    return true;
+  static uint8_t lastResetState = HIGH;
+  
+  uint8_t currentResetState = digitalRead(PIN_BUTTON_RESET);
+  
+  if (lastResetState == HIGH && currentResetState == LOW) {
+    delay(DEBOUNCE_DELAY);
+    if (digitalRead(PIN_BUTTON_RESET) == LOW) {
+      handleButtonReset();
+      lastResetState = LOW;
+      return true;
+    }
   }
+  lastResetState = currentResetState;
+  
+  return false;
 }
 
 void processPanel() {
@@ -290,19 +319,10 @@ void handleFinish() {
 }
 
 void setupButtons() {
-  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_RESET), isrButtonReset, FALLING);
-  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_START_20), isrButtonStart20, FALLING);
-  attachInterrupt(digitalPinToInterrupt(PIN_BUTTON_START_60), isrButtonStart60, FALLING);
-
-  PCMSK2 = B00111111; // enable PCINT16..21
-
-  resetFlagsButtonsControl();
-}
-
-void resetFlagsButtonsControl() {
-  state_buttons_reset_pressed = false;
-  state_buttons_start20_pressed = false;
-  state_buttons_start60_pressed = false;  
+  // Removed attachInterrupt for PIN_BUTTON_RESET, PIN_BUTTON_START_20, and PIN_BUTTON_START_60.
+  // These buttons are now polled in the main loop.
+  
+  PCMSK2 = B00111111; // enable PCINT16..21 for table buttons
 }
 
 void enableButtonsTables() {
@@ -329,21 +349,6 @@ ISR(PCINT2_vect) {
     Serial.print("- ");  
   }
   Serial.println(buttons, BIN);
-}
-
-void isrButtonReset() {
-  state_buttons_reset_pressed = true;
-  Serial.println("B=Reset");  
-}
-
-void isrButtonStart20() {
-  state_buttons_start20_pressed = true;
-  Serial.println("B=Start20");  
-}
-
-void isrButtonStart60() {
-  state_buttons_start60_pressed = true;
-  Serial.println("B=Start60");  
 }
 
 void randomInit() {
